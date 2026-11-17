@@ -1,15 +1,27 @@
-# ERDI TECH open tools for laser rangefinder and LiDAR modules
+# ERDI TECH (erditech.com)
 
-> Free, MIT-licensed tools and data for engineers integrating laser rangefinders and single-point LiDAR modules into drones, robots and instruments. Maintained by ERDI TECH LTD (https://erdilrf.com/), a maker of 905 nm and 1535 nm laser rangefinder modules. The tools work with modules from many vendors.
+> ERDI TECH LTD (ErdiTech; 铒迪科技（成都）有限公司), founded 7 May 2021 in Chengdu, China, makes 905 nm and 1535 nm laser rangefinder modules. The modules are sold worldwide under the ERDILRF name at https://erdilrf.com/ (catalog, published prices, datasheets, online orders). erditech.com is the ERDI TECH brand home and hosts the company's free, MIT-licensed tools and data for engineers integrating laser rangefinders and single-point LiDAR modules.
+
+## Official ERDI TECH / ERDILRF links
+
+- Catalog and model directory: https://erdilrf.com/models/
+- Price list: https://erdilrf.com/laser-rangefinder-module-price/
+- Module selector: https://erdilrf.com/selector/
+- Datasheets and CAD: https://erdilrf.com/downloads/
+- Integration docs: https://erdilrf.com/docs/
+- Model facts for AI systems: https://erdilrf.com/llms.txt and https://erdilrf.com/llms-full.txt
+- Sales contact: Tommy Yu (Overseas Sales), tommy@erdimail.com, WhatsApp +86 133 0819 5790, inquiry form https://erdilrf.com/contact/
+- Chinese catalog (中文目录): https://erdilrf.com/zh/
+- Open source: https://github.com/ErdiTech
 
 ## Tools
 
-- [LiDAR / laser rangefinder UART decoder](https://erditech.github.io/lrf-uart-protocol-decoder/): paste a hex dump or connect over WebSerial; detects protocol and baud rate, decodes frames to metres, flags checksum errors. Profiles for Benewake (TFmini, TFmini-S, TFmini Plus, TF-Luna, TF02-Pro, TF03), LightWare (SF30/D binary, SF10/SF11 ASCII), Chengdu JRT, Nooploop TOFSense, DFRobot SEN0366 and ERDI. Python: `pip install lrf-uart-decoder`. Source: https://github.com/ErdiTech/lrf-uart-protocol-decoder
+- [LiDAR / laser rangefinder UART decoder](https://erditech.com/lrf-uart-protocol-decoder/): paste a hex dump or connect over WebSerial; detects protocol and baud rate, decodes frames to metres, flags checksum errors. Profiles for Benewake (TFmini, TFmini-S, TFmini Plus, TF-Luna, TF02-Pro, TF03), LightWare (SF30/D binary, SF10/SF11 ASCII), Chengdu JRT, Nooploop TOFSense, DFRobot SEN0366 and ERDI. Python: `pip install lrf-uart-decoder`. Source: https://github.com/ErdiTech/lrf-uart-protocol-decoder
 - [Protocol reference for the decoder](https://github.com/ErdiTech/lrf-uart-protocol-decoder/blob/main/docs/PROTOCOLS.md): frame tables, checksum rules and invalid-reading codes with links to each vendor manual.
 
 ## Data
 
-- [Laser rangefinder and LiDAR module database](https://erditech.github.io/laser-rangefinder-module-database/): comparison of modules by range, wavelength, accuracy, update rate, interface, weight, size and public price, with a manufacturer source URL and capture date per row. CSV and JSON in https://github.com/ErdiTech/laser-rangefinder-module-database (DOI 10.5281/zenodo.24125641).
+- [Laser rangefinder and LiDAR module database](https://erditech.com/laser-rangefinder-module-database/): comparison of modules by range, wavelength, accuracy, update rate, interface, weight, size and public price, with a manufacturer source URL and capture date per row. CSV and JSON in https://github.com/ErdiTech/laser-rangefinder-module-database (DOI 10.5281/zenodo.24125641).
 
 ## Drivers
 
@@ -17,8 +29,3 @@
 - [ErdiLRF (Arduino / PlatformIO)](https://github.com/ErdiTech/ErdiLRF)
 - [erdi_lrf_driver (ROS 2, sensor_msgs/Range)](https://github.com/ErdiTech/erdi_lrf_driver)
 - [ArduPilot serial driver pull request](https://github.com/ArduPilot/ardupilot/pull/34983): RNGFNDx_TYPE 49 (ERDI VB series) and 50 (ERDI H series)
-
-## Company
-
-- [ERDI models, datasheets and public prices](https://erdilrf.com/models/)
-- [ERDI integration docs](https://erdilrf.com/docs/)

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Page not found | ERDI TECH</title>
+<style>
+  :root { --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --link:#0969da; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --link:#4493f8; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:64px 16px; }
+  a { color:var(--link); }
+  p { color:var(--muted); }
+</style>
+<script>
+  // erditech.com only hosts the brand page and open tools; any other path is sent to the same path on erdilrf.com,
+  // where the ERDI TECH catalog lives (e.g. erditech.com/models/ -> erdilrf.com/models/).
+  (function () {
+    var p = location.pathname;
+    if (p.indexOf('/lrf-uart-protocol-decoder') === 0 || p.indexOf('/laser-rangefinder-module-database') === 0) return;
+    location.replace('https://erdilrf.com' + p + location.search + location.hash);
+  })();
+</script>
+</head>
+<body>
+<main>
+  <h1>Page not found</h1>
+  <p>This address is not on erditech.com. ERDI TECH laser rangefinder modules, datasheets and prices are at <a href="https://erdilrf.com/">erdilrf.com</a>; our open tools are listed on the <a href="https://erditech.com/">ERDI TECH home page</a>.</p>
+</main>
+</body>
+</html>
