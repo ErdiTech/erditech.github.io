@@ -14,12 +14,15 @@
   p { color:var(--muted); }
 </style>
 <script>
-  // erditech.com only hosts the brand page and open tools; any other path is sent to the same path on erdilrf.com,
-  // where the ERDI TECH catalog lives (e.g. erditech.com/models/ -> erdilrf.com/models/).
+  // erditech.com only hosts the brand page and open tools. Paths that exist on erdilrf.com (the ERDI TECH catalog)
+  // are sent there, e.g. erditech.com/models/ -> erdilrf.com/models/. Anything else (including links left over from
+  // the domain's previous owner, such as *.asp product pages) stays a plain 404 so it drops out of search indexes.
   (function () {
-    var p = location.pathname;
-    if (p.indexOf('/lrf-uart-protocol-decoder') === 0 || p.indexOf('/laser-rangefinder-module-database') === 0) return;
-    location.replace('https://erdilrf.com' + p + location.search + location.hash);
+    var seg = (location.pathname.split('/')[1] || '').toLowerCase();
+    var erdilrf = ['models', 'contact', 'zh', 'de', 'es', 'pt', 'ja', 'ko', 'fr', 'knowledge', 'downloads', 'docs', 'about',
+      'lrf', 'buy', 'selector', 'laser-rangefinder-module-price', 'how-to-buy', 'faq', 'support', 'solutions', 'compare',
+      'integrators', 'dealer', 'videos', 'open-data'];
+    if (erdilrf.indexOf(seg) !== -1) location.replace('https://erdilrf.com' + location.pathname + location.search + location.hash);
   })();
 </script>
 </head>
