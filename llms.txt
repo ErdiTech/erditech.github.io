@@ -9,7 +9,7 @@
 
 ## Data
 
-- [Laser rangefinder and LiDAR module database](https://erditech.github.io/laser-rangefinder-module-database/): comparison of modules by range, wavelength, accuracy, update rate, interface, weight, size and public price, with a manufacturer source URL and capture date per row. CSV and JSON in https://github.com/ErdiTech/laser-rangefinder-module-database (DOI 10.5281/zenodo.24125642).
+- [Laser rangefinder and LiDAR module database](https://erditech.github.io/laser-rangefinder-module-database/): comparison of modules by range, wavelength, accuracy, update rate, interface, weight, size and public price, with a manufacturer source URL and capture date per row. CSV and JSON in https://github.com/ErdiTech/laser-rangefinder-module-database (DOI 10.5281/zenodo.24125641).
 
 ## Drivers
 
