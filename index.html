@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open tools for laser rangefinder and LiDAR modules | ERDI TECH</title>
+<meta name="description" content="Free, MIT-licensed tools for engineers integrating laser rangefinder and single-point LiDAR modules: a browser UART frame decoder, an open module comparison dataset, and Python, Arduino and ROS 2 drivers.">
+<link rel="canonical" href="https://erditech.github.io/">
+<meta property="og:title" content="Open tools for laser rangefinder and LiDAR modules">
+<meta property="og:description" content="UART frame decoder, module comparison dataset and open drivers, maintained by ERDI TECH LTD.">
+<meta property="og:url" content="https://erditech.github.io/">
+<meta property="og:type" content="website">
+<style>
+  :root { --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --line:#d1d9e0; --card:#f6f8fa; --link:#0969da; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --line:#30363d; --card:#151b23; --link:#4493f8; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:48px 16px 64px; }
+  h1 { font-size:2rem; line-height:1.25; margin:0 0 12px; }
+  h2 { font-size:1.15rem; margin:40px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  p.lead { color:var(--muted); margin:0 0 8px; font-size:1.05rem; }
+  a { color:var(--link); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px 18px; margin:12px 0; }
+  .card h3 { margin:0 0 4px; font-size:1.05rem; }
+  .card p { margin:0 0 8px; color:var(--muted); }
+  .links { display:flex; flex-wrap:wrap; gap:6px 18px; font-size:.95rem; }
+  code { font:.9em ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace; background:var(--bg); border:1px solid var(--line); border-radius:4px; padding:1px 5px; }
+  ul { padding-left:20px; margin:8px 0; }
+  li { margin:4px 0; }
+  footer { margin-top:48px; padding-top:16px; border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://erdilrf.com/#organization",
+      "name": "ERDI TECH LTD",
+      "url": "https://erdilrf.com/",
+      "sameAs": ["https://github.com/ErdiTech"]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "LiDAR / laser rangefinder UART decoder",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web browser (WebSerial), Windows, macOS, Linux (Python)",
+      "url": "https://erditech.github.io/lrf-uart-protocol-decoder/",
+      "codeRepository": "https://github.com/ErdiTech/lrf-uart-protocol-decoder",
+      "license": "https://opensource.org/licenses/MIT",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "publisher": { "@id": "https://erdilrf.com/#organization" }
+    },
+    {
+      "@type": "Dataset",
+      "name": "Laser rangefinder and LiDAR module database",
+      "description": "Open comparison dataset of laser rangefinder and single-point LiDAR modules with a source URL and capture date for every row.",
+      "url": "https://erditech.github.io/laser-rangefinder-module-database/",
+      "sameAs": ["https://github.com/ErdiTech/laser-rangefinder-module-database", "https://doi.org/10.5281/zenodo.24125642"],
+      "license": "https://opensource.org/licenses/MIT",
+      "creator": { "@id": "https://erdilrf.com/#organization" }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<main>
+  <h1>Open tools for laser rangefinder and LiDAR modules</h1>
+  <p class="lead">Free, MIT-licensed tools and data for engineers who integrate laser rangefinders and single-point LiDAR modules into drones, robots and instruments. They work with modules from many vendors, not only ours.</p>
+
+  <h2>Tools</h2>
+  <div class="card">
+    <h3><a href="https://erditech.github.io/lrf-uart-protocol-decoder/">LiDAR / laser rangefinder UART decoder</a></h3>
+    <p>Paste a hex dump or connect a module over WebSerial. The decoder detects the protocol and baud rate, converts every frame to metres and flags checksum errors. Profiles cover Benewake (TFmini, TF-Luna, TF02-Pro, TF03), LightWare, Chengdu JRT, Nooploop TOFSense, DFRobot SEN0366 and ERDI modules.</p>
+    <div class="links">
+      <a href="https://erditech.github.io/lrf-uart-protocol-decoder/">Open in browser</a>
+      <a href="https://github.com/ErdiTech/lrf-uart-protocol-decoder">Source on GitHub</a>
+      <a href="https://pypi.org/project/lrf-uart-decoder/">Python: <code>pip install lrf-uart-decoder</code></a>
+    </div>
+  </div>
+
+  <h2>Data</h2>
+  <div class="card">
+    <h3><a href="https://erditech.github.io/laser-rangefinder-module-database/">Laser rangefinder and LiDAR module database</a></h3>
+    <p>A sortable comparison of modules by range, wavelength (905 nm / 1535 nm), accuracy, update rate, interface, weight, size and public price, with the manufacturer source URL and capture date for every row. Download it as CSV or JSON.</p>
+    <div class="links">
+      <a href="https://erditech.github.io/laser-rangefinder-module-database/">Open the table</a>
+      <a href="https://github.com/ErdiTech/laser-rangefinder-module-database">Source on GitHub</a>
+      <a href="https://doi.org/10.5281/zenodo.24125642">Zenodo DOI</a>
+    </div>
+  </div>
+
+  <h2>Drivers</h2>
+  <ul>
+    <li>Python: <a href="https://pypi.org/project/erdi-lrf/"><code>pip install erdi-lrf</code></a> (<a href="https://github.com/ErdiTech/erdi-lrf-drivers">source</a>)</li>
+    <li>Arduino and PlatformIO: <a href="https://github.com/ErdiTech/ErdiLRF">ErdiLRF</a> (Arduino Library Manager: ErdiLRF)</li>
+    <li>ROS 2: <a href="https://github.com/ErdiTech/erdi_lrf_driver">erdi_lrf_driver</a> (sensor_msgs/Range)</li>
+    <li>MicroPython on ESP32: <a href="https://github.com/ErdiTech/erdi-lrf-esp32-micropython">erdi-lrf-esp32-micropython</a></li>
+    <li>CircuitPython: <a href="https://github.com/ErdiTech/CircuitPython_ERDI_LRF">CircuitPython_ERDI_LRF</a> (in the CircuitPython Community Bundle)</li>
+    <li>ESPHome and Home Assistant: <a href="https://github.com/ErdiTech/erdi-lrf-home-assistant">erdi-lrf-home-assistant</a></li>
+    <li>STM32 HAL: <a href="https://github.com/ErdiTech/erdi-lrf-stm32-hal">erdi-lrf-stm32-hal</a></li>
+    <li>ArduPilot: serial driver submitted upstream in <a href="https://github.com/ArduPilot/ardupilot/pull/34983">ArduPilot/ardupilot#34983</a></li>
+  </ul>
+
+  <h2>Guides</h2>
+  <ul>
+    <li><a href="https://github.com/ErdiTech/drone-altimeter-laser-rangefinder-guide">Using a laser rangefinder as a UAV altimeter</a> (905 vs 1535 nm, mounting, ArduPilot and PX4 tuning)</li>
+    <li><a href="https://github.com/ErdiTech/erdi-lrf-pixhawk-ardupilot">Wiring a UART laser rangefinder to Pixhawk / ArduPilot / PX4</a></li>
+    <li><a href="https://github.com/ErdiTech/awesome-laser-rangefinder">awesome-laser-rangefinder</a>, a curated list of modules, drivers and integration resources</li>
+  </ul>
+
+  <footer>
+    Maintained by <a href="https://erdilrf.com/">ERDI TECH LTD</a>, Chengdu, China, maker of 905 nm and 1535 nm laser rangefinder modules
+    (<a href="https://erdilrf.com/models/">models and datasheets</a>, <a href="https://erdilrf.com/docs/">integration docs</a>).
+    Found a bug or a missing module? Open an issue on the relevant <a href="https://github.com/ErdiTech">GitHub repository</a>.
+  </footer>
+</main>
+</body>
+</html>
