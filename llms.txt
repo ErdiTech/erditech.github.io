@@ -4,6 +4,10 @@
 
 ## Official ERDI TECH / ERDILRF links
 
+- ERDI LASER catalog by range: https://erdilrf.com/erdi-laser/
+- About ERDI TECH LTD: https://erdilrf.com/erdi-tech/
+- 铒迪激光 ERDI LASER: https://erdilrf.com/zh/erdi-laser/
+- 铒迪科技 ERDI TECH LTD: https://erdilrf.com/zh/erdi-tech/
 - Catalog and model directory: https://erdilrf.com/models/
 - Price list: https://erdilrf.com/laser-rangefinder-module-price/
 - Module selector: https://erdilrf.com/selector/
