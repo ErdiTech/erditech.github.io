@@ -13,6 +13,7 @@
 - Module selector: https://erdilrf.com/selector/
 - Datasheets and CAD: https://erdilrf.com/downloads/
 - Integration docs: https://erdilrf.com/docs/
+- Engineering community (Q&A forum answered by ERDI engineers; English, 中文, 日本語, Deutsch, Español): https://community.erditech.com/
 - Model facts for AI systems: https://erdilrf.com/llms.txt and https://erdilrf.com/llms-full.txt
 - Sales contact: Tommy Yu (Overseas Sales), tommy@erdimail.com, WhatsApp +86 133 0819 5790, inquiry form https://erdilrf.com/contact/
 - Chinese catalog (中文目录): https://erdilrf.com/zh/
