@@ -9,138 +9,374 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
-<meta name="theme-color" content="#0b2545">
+<meta name="theme-color" content="#000000">
 <meta property="og:site_name" content="ERDI TECH">
 <meta property="og:title" content="ERDI TECH / ERDI LASER: laser rangefinder modules and open tools">
 <meta property="og:description" content="ERDI TECH LTD makes 905 nm and 1535 nm laser rangefinder modules (ERDILRF, erdilrf.com) and maintains a free UART decoder, module database and drivers.">
 <meta property="og:url" content="https://erditech.com/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://erditech.com/assets/img/lrf3000a1.webp">
-<link rel="preload" as="image" href="/assets/img/lrf3000a1.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@erdilrf">
+<meta name="twitter:title" content="ERDI TECH / ERDI LASER: laser rangefinder modules and open tools">
+<meta name="twitter:description" content="905 nm and 1535 nm laser rangefinder modules (ERDILRF) plus a free UART decoder, module database and drivers.">
+<meta name="twitter:image" content="https://erditech.com/assets/img/lrf3000a1.webp">
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-latin.woff2" crossorigin>
+<link rel="preload" as="image" href="/assets/img/lrf0818c-cut.webp">
 <style>
-  :root { color-scheme:light; --ink:#0f172a; --text:#1e293b; --muted:#475569; --line:#e2e8f0; --bg:#ffffff; --soft:#f5f7fa; --navy:#0b2545; --accent:#0b5cd5; --accent-dark:#0849ac; --chip:#eef3fd; --chip-ink:#123a7a; }
-  * { box-sizing:border-box; }
-  html { scroll-behavior:smooth; scroll-padding-top:76px; }
-  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif; -webkit-font-smoothing:antialiased; }
+  @font-face { font-family:"Geist"; src:url("/assets/fonts/geist-latin.woff2") format("woff2"); font-weight:100 900; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Geist Mono"; src:url("/assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight:100 900; font-style:normal; font-display:swap; }
+
+  :root {
+    color-scheme: light;
+    --bg:#ffffff; --surface:#f5f5f5; --line:#e5e5e5; --line-strong:#d4d4d4;
+    --ink:#171717; --text:#313131; --muted:#666666;
+    --accent:#1c5fc4; --accent-hover:#1850a5; --accent-soft:#e9f0fb; --accent-on-dark:#7aa7e8;
+    --black:#000000; --dark:#181818; --dark-2:#272727; --dark-3:#313131; --on-dark:#d4d4d4; --on-dark-muted:#9b9b9b;
+    --ease:cubic-bezier(0.22,1,0.36,1);
+    --sans:"Geist","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"Geist Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+    --z-menu:20; --z-nav:30; --z-skip:50;
+  }
+  *, *::before, *::after { box-sizing:border-box; }
+  html { scroll-behavior:smooth; scroll-padding-top:96px; -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); font-size:16px; line-height:24px; font-weight:400; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
   img { max-width:100%; height:auto; display:block; }
-  a { color:var(--accent); text-decoration:none; }
-  a:hover { text-decoration:underline; }
-  .wrap { max-width:1180px; margin:0 auto; padding:0 24px; }
-  h1, h2, h3 { color:var(--ink); }
-  /* header */
-  header.site { position:sticky; top:0; z-index:20; background:rgba(255,255,255,.94); backdrop-filter:saturate(180%) blur(10px); -webkit-backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line); }
-  .bar { display:flex; align-items:center; gap:28px; height:64px; }
-  .brand img { height:22px; width:auto; }
-  nav.menu { display:flex; gap:24px; margin-left:auto; font-size:15px; font-weight:500; }
-  nav.menu a { color:var(--text); }
-  nav.menu a:hover { color:var(--accent); text-decoration:none; }
-  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 22px; border-radius:8px; border:1px solid var(--line); background:#fff; color:var(--ink); font-weight:600; font-size:15px; line-height:1.2; white-space:nowrap; }
-  .btn:hover { text-decoration:none; border-color:#cbd5e1; }
-  .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
-  .btn.primary:hover { background:var(--accent-dark); border-color:var(--accent-dark); }
-  .btn.sm { padding:9px 16px; font-size:14px; }
-  /* hero */
-  .hero { background:linear-gradient(180deg,#f3f6fb 0%,#ffffff 100%); padding:56px 0 48px; }
-  .hero-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:center; }
-  .eyebrow { margin:0 0 14px; font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
-  h1 { margin:0 0 18px; font-size:clamp(38px,5.2vw,62px); line-height:1.04; letter-spacing:-.025em; font-weight:800; }
-  .lead { margin:0 0 28px; font-size:19px; line-height:1.55; color:var(--muted); max-width:560px; }
-  .lead strong { color:var(--ink); }
-  .actions { display:flex; flex-wrap:wrap; gap:12px; }
-  .hero-img { margin:0; border-radius:20px; background:radial-gradient(circle at 50% 45%,#ffffff 0%,#eef1f5 70%); box-shadow:0 1px 2px rgba(15,23,42,.06),0 18px 40px -18px rgba(15,23,42,.25); overflow:hidden; }
-  .hero-img img { width:100%; aspect-ratio:1/1; object-fit:cover; }
-  /* stats */
-  .stats { background:var(--navy); color:#fff; }
-  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); }
-  .stats-grid div { padding:26px 20px; border-left:1px solid rgba(255,255,255,.12); }
-  .stats-grid div:first-child { border-left:0; padding-left:0; }
-  .stats b { display:block; font-size:30px; line-height:1.15; font-weight:800; letter-spacing:-.01em; white-space:nowrap; }
-  .stats span { display:block; margin-top:4px; font-size:14px; color:rgba(255,255,255,.75); }
+  a { color:var(--accent); text-decoration:none; transition:color 300ms var(--ease); }
+  a:hover { color:var(--accent-hover); }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+  h1, h2, h3, p, dl, dd, ul, ol, figure { margin:0; }
+  h1, h2, h3 { color:var(--ink); text-wrap:balance; }
+  p, li, dd { text-wrap:pretty; }
+  .sprite { position:absolute; width:0; height:0; overflow:hidden; }
+  .ic { width:1em; height:1em; flex:none; fill:currentColor; }
+  .wrap { width:100%; max-width:1280px; margin:0 auto; padding:0 32px; }
+  .skip { position:absolute; left:16px; top:-48px; z-index:var(--z-skip); background:var(--ink); color:#fff; padding:8px 12px; border-radius:8px; font-size:14px; line-height:20px; font-weight:600; transition:transform 300ms var(--ease); }
+  .skip:focus { transform:translateY(64px); color:#fff; }
+
+  /* named text styles (landing-page-design B1) */
+  .heading-1 { font-size:60px; line-height:60px; font-weight:600; letter-spacing:-0.035em; }
+  .heading-2 { font-size:48px; line-height:48px; font-weight:600; letter-spacing:-0.03em; }
+  .heading-3 { font-size:36px; line-height:40px; font-weight:600; letter-spacing:-0.025em; }
+  .heading-5 { font-size:24px; line-height:32px; font-weight:600; letter-spacing:-0.015em; }
+  .heading-6 { font-size:20px; line-height:28px; font-weight:600; letter-spacing:-0.01em; }
+  .title-2 { font-size:18px; line-height:28px; font-weight:500; }
+  .title-3 { font-size:16px; line-height:24px; font-weight:500; }
+  .title-4 { font-size:14px; line-height:20px; font-weight:500; }
+  .body-3 { font-size:16px; line-height:24px; font-weight:400; }
+  .body-6 { font-size:14px; line-height:20px; font-weight:400; }
+  .caption-1 { font-size:14px; line-height:20px; font-weight:500; }
+  .caption-4 { font-size:12px; line-height:16px; font-weight:500; }
+  .mono { font-family:var(--mono); letter-spacing:0.01em; }
+  .muted { color:var(--muted); }
+  .num { font-variant-numeric:tabular-nums; }
+
+  /* buttons and links */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:8px 12px; border-radius:8px; border:1px solid transparent; font-size:16px; line-height:24px; font-weight:600; white-space:nowrap; cursor:pointer; transition:background-color 300ms var(--ease), color 300ms var(--ease), border-color 300ms var(--ease), transform 500ms var(--ease); }
+  .btn:active { transform:scale(0.98); }
+  .btn .ic { transition:transform 500ms var(--ease); }
+  .btn:hover .ic { transform:translateX(4px); }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:var(--accent-hover); color:#fff; }
+  .btn-sm { font-size:14px; line-height:20px; padding:8px 12px; }
+  .btn-light { background:#fff; color:var(--ink); }
+  .btn-light:hover { background:var(--surface); color:var(--ink); }
+  .tlink { display:inline-flex; align-items:center; gap:8px; font-weight:600; color:var(--ink); }
+  .tlink .ic { transition:transform 500ms var(--ease); }
+  .tlink:hover { color:var(--accent); }
+  .tlink:hover .ic { transform:translateX(4px); }
+  .label { display:block; margin-bottom:12px; color:var(--text); }
+
+  /* floating navigation */
+  .nav { position:fixed; top:12px; left:0; right:0; z-index:var(--z-nav); display:flex; justify-content:center; padding:0 16px; pointer-events:none; }
+  .nav-bar { pointer-events:auto; display:flex; align-items:center; gap:24px; padding:8px 8px 8px 16px; border:1px solid rgba(229,229,229,.9); border-radius:16px; background:rgba(255,255,255,.9); -webkit-backdrop-filter:saturate(180%) blur(16px); backdrop-filter:saturate(180%) blur(16px); }
+  .brand { display:flex; align-items:center; gap:12px; color:var(--ink); }
+  .brand img { height:18px; width:auto; }
+  .brand-sub { padding-left:12px; border-left:1px solid var(--line-strong); color:var(--muted); }
+  .nav-links { display:flex; align-items:center; gap:4px; list-style:none; padding:0; }
+  .nav-links a { display:block; padding:8px 12px; border-radius:8px; color:var(--text); transition:background-color 300ms var(--ease), color 300ms var(--ease); }
+  .nav-links a:hover { background:rgba(0,0,0,.04); color:var(--ink); }
+  .nav-links a[aria-current="true"] { color:var(--ink); background:rgba(0,0,0,.05); }
+  .menu-btn { display:none; align-items:center; gap:8px; padding:8px 12px; border:0; border-radius:8px; background:transparent; color:var(--ink); font:inherit; font-size:14px; line-height:20px; font-weight:600; cursor:pointer; }
+  .burger { position:relative; width:16px; height:12px; }
+  .burger::before, .burger::after { content:""; position:absolute; left:0; width:16px; height:2px; border-radius:2px; background:currentColor; transition:transform 500ms var(--ease); }
+  .burger::before { top:2px; } .burger::after { top:8px; }
+  .menu-open .burger::before { transform:translateY(3px) rotate(45deg); }
+  .menu-open .burger::after { transform:translateY(-3px) rotate(-45deg); }
+  .mpanel { position:fixed; inset:0; z-index:var(--z-menu); display:flex; flex-direction:column; padding:96px 24px 32px; background:rgba(255,255,255,.94); -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px); opacity:0; visibility:hidden; transition:opacity 300ms var(--ease), visibility 0s linear 300ms; }
+  .menu-open .mpanel { opacity:1; visibility:visible; transition:opacity 300ms var(--ease), visibility 0s; }
+  .mpanel ul { list-style:none; padding:0; display:grid; gap:4px; }
+  .mpanel li { opacity:0; transform:translateY(24px); transition:opacity 500ms var(--ease), transform 500ms var(--ease); }
+  .menu-open .mpanel li { opacity:1; transform:none; }
+  .menu-open .mpanel li:nth-child(2) { transition-delay:60ms; } .menu-open .mpanel li:nth-child(3) { transition-delay:120ms; }
+  .menu-open .mpanel li:nth-child(4) { transition-delay:180ms; } .menu-open .mpanel li:nth-child(5) { transition-delay:240ms; }
+  .menu-open .mpanel li:nth-child(6) { transition-delay:300ms; } .menu-open .mpanel li:nth-child(7) { transition-delay:340ms; }
+  .mpanel a { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); color:var(--ink); }
+  .mpanel .btn { margin-top:24px; justify-content:center; border-bottom:0; color:#fff; padding:12px; }
+
+  /* hero: black stage with a measurement dot grid */
+  .hero { position:relative; padding:128px 0 0; background-color:var(--black); color:var(--on-dark); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23ffffff' fill-opacity='0.09'/%3E%3C/svg%3E"); }
+  .hero-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:24px; align-items:center; }
+  .hero-copy { grid-column:1 / span 6; padding-bottom:64px; }
+  .eyebrow { display:inline-flex; flex-wrap:wrap; gap:4px 12px; margin-bottom:24px; color:var(--on-dark-muted); }
+  .eyebrow span + span::before { content:"/"; margin-right:12px; color:var(--dark-3); }
+  .hero h1 { max-width:680px; margin-bottom:24px; background:linear-gradient(90deg,#ffffff 0%,#9b9b9b 100%); -webkit-background-clip:text; background-clip:text; color:transparent; padding-bottom:4px; }
+  .lead { max-width:560px; margin-bottom:32px; color:var(--on-dark-muted); }
+  .lead strong { color:#fff; font-weight:500; }
+  .actions { display:flex; flex-wrap:wrap; align-items:center; gap:16px 24px; }
+  .hero .tlink { color:#fff; }
+  .hero .tlink:hover { color:var(--accent-on-dark); }
+  .assure { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:32px; color:var(--on-dark-muted); list-style:none; padding:0; }
+  .assure li { display:inline-flex; align-items:center; gap:8px; }
+  .assure li::before { content:""; width:4px; height:4px; border-radius:1px; background:var(--accent-on-dark); }
+  .assure a { color:var(--accent-on-dark); }
+  .assure a:hover { color:#fff; }
+  .stats { position:relative; border-top:1px solid var(--dark-2); }
+  .stats-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .stat { padding:24px 24px 32px; border-left:1px solid var(--dark-2); }
+  .stat:first-child { border-left:0; padding-left:0; }
+  .stat b { display:block; margin-bottom:8px; color:#fff; font-size:36px; line-height:40px; font-weight:600; letter-spacing:-0.025em; white-space:nowrap; }
+  .stat span { color:var(--on-dark-muted); }
+
   /* sections */
-  .sec { padding:72px 0; }
-  .sec.alt { background:var(--soft); }
-  .sec-head { display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px; }
-  .sec-head h2 { margin:0; font-size:30px; letter-spacing:-.015em; }
-  .sec-head a { font-weight:600; font-size:15px; }
-  .cards4 { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
-  .pcard { display:flex; flex-direction:column; background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 14px 18px; color:var(--text); transition:box-shadow .15s ease, transform .15s ease; }
-  .pcard:hover { text-decoration:none; box-shadow:0 14px 30px -16px rgba(15,23,42,.35); transform:translateY(-2px); }
-  .pcard .ph { background:#f6f7f9; border-radius:10px; overflow:hidden; }
-  .pcard .ph img { width:100%; aspect-ratio:1/1; object-fit:cover; }
-  .pcard h3 { margin:14px 4px 2px; font-size:19px; }
-  .pcard .sub { margin:0 4px 12px; font-size:14px; color:var(--muted); }
-  .chips { list-style:none; margin:0 4px 14px; padding:0; display:flex; flex-wrap:wrap; gap:6px; }
-  .chips li { background:var(--chip); color:var(--chip-ink); font-size:12.5px; font-weight:600; padding:4px 9px; border-radius:999px; }
-  .pcard .more { margin:auto 4px 0; font-size:14px; font-weight:600; color:var(--accent); }
-  .links-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
-  .links-row a { border:1px solid var(--line); background:#fff; color:var(--ink); padding:9px 16px; border-radius:999px; font-size:14px; font-weight:500; }
-  .links-row a:hover { border-color:var(--accent); color:var(--accent); text-decoration:none; }
-  .cards2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  .tcard { background:#fff; border:1px solid var(--line); border-radius:14px; padding:24px; }
-  .tcard .tag { display:inline-block; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
-  .tcard h3 { margin:0 0 8px; font-size:20px; }
-  .tcard p { margin:0 0 14px; color:var(--muted); }
-  .tlinks { display:flex; flex-wrap:wrap; gap:6px 18px; font-size:14.5px; font-weight:600; }
-  code { font:.9em ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace; background:var(--soft); border:1px solid var(--line); border-radius:4px; padding:1px 5px; }
-  details.more-list { margin-top:20px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:4px 24px; }
-  details.more-list summary { cursor:pointer; padding:14px 0; font-weight:600; color:var(--ink); }
-  details.more-list ul { margin:0 0 16px; padding-left:20px; columns:2; column-gap:40px; }
-  details.more-list li { margin:5px 0; break-inside:avoid; }
+  .sec { padding:96px 0; }
+  .sec-head { display:flex; justify-content:space-between; align-items:flex-end; gap:16px 32px; flex-wrap:wrap; margin-bottom:40px; }
+  .sec-head h2 { max-width:680px; }
+
+  /* modules bento */
+  .bento { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:16px; }
+  .pcard { position:relative; display:flex; flex-direction:column; border-radius:16px; background:var(--surface); color:var(--text); overflow:hidden; transition:background-color 300ms var(--ease); }
+  .pcard:hover { background:#efefef; color:var(--text); }
+  .pcard:active { transform:scale(0.995); }
+  .pcard .ph { display:flex; align-items:center; justify-content:center; aspect-ratio:4 / 3; padding:32px; }
+  .pcard .ph img { max-height:100%; width:auto; object-fit:contain; transition:transform 500ms var(--ease); }
+  .pcard:hover .ph img { transform:scale(1.04); }
+  .pcard .body { display:flex; flex-direction:column; flex:1; padding:0 24px 24px; }
+  .pcard h3 { margin-bottom:4px; }
+  .pcard .sub { margin-bottom:16px; color:var(--muted); }
+  .specs { display:flex; flex-wrap:wrap; gap:8px; list-style:none; padding:0; margin-bottom:24px; }
+  .specs li { padding:4px 8px; border-radius:4px; background:#fff; color:var(--ink); }
+  .pcard .more { margin-top:auto; display:inline-flex; align-items:center; gap:8px; color:var(--ink); font-weight:600; }
+  .pcard .more .ic { transition:transform 500ms var(--ease); }
+  .pcard:hover .more { color:var(--accent); }
+  .pcard:hover .more .ic { transform:translateX(4px); }
+
+  /* engineering resources: link list beside a real screenshot of the selector */
+  .res-wrap { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:24px; margin-top:64px; align-items:start; }
+  .res-head { grid-column:1 / -1; }
+  .res { grid-column:1 / span 5; list-style:none; padding:0; border-top:1px solid var(--line); }
+  .res a { display:grid; grid-template-columns:1fr auto; gap:4px 16px; padding:16px 0; border-bottom:1px solid var(--line); color:var(--text); }
+  .res a:hover { color:var(--text); }
+  .res h3 { color:var(--ink); transition:color 300ms var(--ease); }
+  .res a:hover h3 { color:var(--accent); }
+  .res p { grid-column:1; color:var(--muted); }
+  .res .go { grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--muted); transition:transform 500ms var(--ease), color 300ms var(--ease); }
+  .res a:hover .go { transform:translate(2px,-2px); color:var(--accent); }
+
+  /* browser frame around real screenshots */
+  .frame { display:block; border-radius:12px; overflow:hidden; border:1px solid var(--line); background:#fff; color:var(--muted); transition:transform 500ms var(--ease), border-color 300ms var(--ease); }
+  .frame:hover { transform:translateY(-4px); border-color:var(--line-strong); color:var(--muted); }
+  .frame img { width:100%; }
+
+  /* tagline reveal (landing-page-design B11) */
+  .tagline { padding:96px 0 112px; border-top:1px solid var(--line); }
+  .tagline p { max-width:1100px; color:var(--ink); }
+  .tagline .w { color:rgba(23,23,23,.28); transition:color 700ms var(--ease); }
+  .tagline .w.on { color:var(--ink); }
+
+  /* open tools: dark band with real screenshots */
+  .tools { background:var(--dark); color:var(--on-dark); }
+  .tools h2, .tools h3 { color:#fff; }
+  .tools .label { color:var(--on-dark-muted); }
+  .tools .tlink { color:#fff; }
+  .tools .tlink:hover { color:var(--accent-on-dark); }
+  .tools a { color:var(--accent-on-dark); }
+  .tools a:hover { color:#fff; }
+  .tool { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:24px; align-items:center; padding:48px 0; border-top:1px solid var(--dark-2); }
+  .tool:first-of-type { border-top:0; padding-top:0; }
+  .tool-copy { grid-column:1 / span 5; }
+  .tool-vis { grid-column:7 / span 6; }
+  .tool.flip .tool-copy { grid-column:8 / span 5; grid-row:1; }
+  .tool.flip .tool-vis { grid-column:1 / span 6; grid-row:1; }
+  .tool .kicker { display:inline-block; margin-bottom:16px; padding:4px 8px; border-radius:4px; background:var(--dark-2); color:var(--accent-on-dark); }
+  .tool h3 { margin-bottom:12px; }
+  .tool h3 a { color:#fff; }
+  .tool h3 a:hover { color:var(--accent-on-dark); }
+  .tool p { margin-bottom:24px; color:var(--on-dark-muted); max-width:520px; }
+  .tool-links { display:flex; flex-wrap:wrap; gap:12px 24px; }
+  .tools .frame { border-color:var(--dark-3); }
+  .pip { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
+  .pip code { align-self:flex-start; }
+  code { font-family:var(--mono); font-size:14px; line-height:20px; padding:2px 8px; border-radius:4px; background:var(--dark-2); border:1px solid var(--dark-3); color:#fff; }
+  .drivers { margin-top:48px; padding-top:48px; border-top:1px solid var(--dark-2); }
+  .drivers h3 { margin-bottom:16px; }
+  .dlist { list-style:none; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:48px; }
+  .dlist li { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:4px 24px; padding:12px 0; border-bottom:1px solid var(--dark-2); }
+  .dlist .k { color:#fff; font-weight:500; }
+
+  /* faq */
+  .faq { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:24px; }
+  .faq-head { grid-column:1 / span 4; align-self:start; position:sticky; top:96px; }
+  .faq-head p { margin:16px 0 24px; color:var(--muted); max-width:320px; }
+  .faq dl { grid-column:6 / span 7; border-top:1px solid var(--line); }
+  .faq dt { padding-top:24px; color:var(--ink); }
+  .faq dd { padding:8px 0 24px; border-bottom:1px solid var(--line); color:var(--muted); max-width:640px; }
+
   /* contact */
-  .contact { display:grid; grid-template-columns:1.2fr 1fr; gap:32px; align-items:center; background:linear-gradient(135deg,#0b2545 0%,#13396b 100%); color:#fff; border-radius:20px; padding:40px; }
-  .contact h2 { color:#fff; margin:0 0 10px; font-size:30px; }
-  .contact p { margin:0; color:rgba(255,255,255,.82); font-size:17px; }
-  .contact .who { margin-top:14px; font-size:15px; color:rgba(255,255,255,.7); }
-  .contact .acts { display:flex; flex-direction:column; gap:12px; }
-  .contact .btn { justify-content:flex-start; }
-  .contact .btn.ghost { background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.25); color:#fff; }
-  .contact .btn.ghost:hover { background:rgba(255,255,255,.14); }
-  .contact .btn.light { background:#fff; border-color:#fff; color:var(--navy); }
+  .sec-contact { padding-top:0; }
+  .contact { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:24px; padding:48px; border-radius:24px; background:var(--dark); color:var(--on-dark); }
+  .contact-copy { grid-column:1 / span 6; }
+  .contact .label { color:var(--on-dark-muted); }
+  .contact h2 { color:#fff; margin-bottom:16px; }
+  .contact .who { margin-top:24px; color:var(--on-dark-muted); }
+  .contact-acts { grid-column:8 / span 5; display:flex; flex-direction:column; gap:8px; align-self:center; }
+  .contact-acts .btn { justify-content:space-between; padding:12px 16px; }
+  .crow { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 16px; border-radius:8px; background:var(--dark-2); color:#fff; transition:background-color 300ms var(--ease); }
+  .crow:hover { background:var(--dark-3); color:#fff; }
+  .crow span { display:inline-flex; align-items:center; gap:12px; }
+  .crow small { color:var(--on-dark-muted); font-size:14px; line-height:20px; }
+  .crow .ic { font-size:20px; }
+
   /* company */
-  .company { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
-  dl.facts { display:grid; grid-template-columns:max-content 1fr; gap:10px 24px; margin:0; }
-  dl.facts dt { color:var(--muted); font-size:15px; }
-  dl.facts dd { margin:0; color:var(--ink); }
-  .zh { border-left:3px solid var(--accent); padding-left:20px; }
-  .zh h2 { margin:0 0 10px; font-size:22px; }
-  .zh p { margin:0; color:var(--text); }
-  footer.site { border-top:1px solid var(--line); padding:28px 0 36px; color:var(--muted); font-size:14px; }
-  footer.site .wrap { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; }
+  .company { background:var(--surface); }
+  .company-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:24px; }
+  .company-facts { grid-column:1 / span 7; }
+  .company-facts h2 { margin-bottom:32px; }
+  dl.facts { display:grid; grid-template-columns:max-content 1fr; border-top:1px solid var(--line-strong); }
+  dl.facts dt, dl.facts dd { padding:12px 0; border-bottom:1px solid var(--line-strong); }
+  dl.facts dt { padding-right:32px; color:var(--muted); }
+  dl.facts dd { color:var(--ink); }
+  .zh { grid-column:9 / span 4; align-self:start; padding:32px; border-radius:16px; background:#fff; }
+  .zh h2 { margin-bottom:12px; }
+  .zh p { color:var(--text); font-size:16px; line-height:24px; }
+
+  /* footer */
+  footer.site { padding:48px 0 64px; border-top:1px solid var(--line); color:var(--muted); }
+  .foot-grid { display:flex; flex-wrap:wrap; justify-content:space-between; gap:24px 48px; }
+  .foot-brand img { height:16px; width:auto; margin-bottom:12px; }
+  .foot-links { display:flex; flex-wrap:wrap; gap:8px 24px; list-style:none; padding:0; max-width:760px; }
+  .foot-links a { color:var(--text); }
+  .foot-links a:hover { color:var(--accent); }
+  .foot-legal { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px 24px; margin-top:32px; padding-top:24px; border-top:1px solid var(--line); }
+  .foot-legal a { color:var(--muted); }
+  .foot-legal a:hover { color:var(--accent); }
+
   .mbar { display:none; }
-  /* responsive */
-  @media (max-width:1000px) { .cards4 { grid-template-columns:repeat(2,1fr); } }
+
+  /* scroll reveal: hidden only when JS runs */
+  .js [data-reveal] { opacity:0; transform:translateY(32px); transition:opacity 700ms var(--ease), transform 700ms var(--ease); }
+  .js [data-reveal].in { opacity:1; transform:none; }
+
+  @media (max-width:1100px) {
+    .nav-links a { padding:8px; }
+    .brand-sub { display:none; }
+  }
+  @media (max-width:960px) {
+    .heading-1 { font-size:48px; line-height:48px; }
+    .heading-2 { font-size:36px; line-height:40px; }
+    .hero-copy { grid-column:1 / -1; padding-bottom:16px; }
+              .tool-copy, .tool-vis, .tool.flip .tool-copy, .tool.flip .tool-vis { grid-column:1 / -1; grid-row:auto; }
+    .dlist { grid-template-columns:1fr; }
+    .contact-copy, .contact-acts { grid-column:1 / -1; }
+    .faq-head, .faq dl { grid-column:1 / -1; }
+    .faq-head { position:static; }
+    .company-facts, .zh { grid-column:1 / -1; }
+  }
   @media (max-width:860px) {
-    .hero-grid { grid-template-columns:1fr; }
-    .hero-img { max-width:440px; }
-    .stats-grid { grid-template-columns:repeat(2,1fr); }
-    .stats-grid div:nth-child(3) { border-left:0; padding-left:0; }
-    .stats-grid div { border-top:1px solid rgba(255,255,255,.12); }
-    .stats-grid div:nth-child(-n+2) { border-top:0; }
-    .cards2, .company, .contact { grid-template-columns:1fr; }
-    details.more-list ul { columns:1; }
+    .nav-links, .nav-cta { display:none; }
+    .menu-btn { display:inline-flex; }
+    .nav { padding:0 12px; }
+    .nav-bar { width:100%; justify-content:space-between; }
   }
-  @media (max-width:720px) {
-    nav.menu { display:none; }
-    .bar { justify-content:space-between; }
-    .wrap { padding:0 18px; }
-    .hero { padding:28px 0 28px; }
-    .hero-grid { gap:24px; }
-    .hero-img { max-width:240px; border-radius:16px; }
-    .lead { font-size:17px; }
-    .sec { padding:52px 0; }
-    .sec-head h2, .contact h2 { font-size:25px; }
-    .contact { padding:28px 22px; }
-    dl.facts { grid-template-columns:1fr; gap:2px; }
-    dl.facts dd { margin-bottom:10px; }
-    body { padding-bottom:68px; }
-    .mbar { display:grid; grid-template-columns:1fr 1fr 1.2fr; gap:8px; position:fixed; left:0; right:0; bottom:0; z-index:30; padding:10px 12px calc(10px + env(safe-area-inset-bottom)); background:rgba(255,255,255,.97); border-top:1px solid var(--line); box-shadow:0 -6px 18px -12px rgba(15,23,42,.35); }
-    .mbar a { display:flex; align-items:center; justify-content:center; height:44px; border-radius:8px; font-weight:700; font-size:14.5px; border:1px solid var(--line); color:var(--ink); }
-    .mbar a.wa { background:#25d366; border-color:#25d366; color:#fff; }
-    .mbar a.q { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .mbar a:hover { text-decoration:none; }
+  @media (max-width:640px) {
+    .wrap { padding:0 16px; }
+    .heading-1 { font-size:36px; line-height:40px; letter-spacing:-0.03em; }
+    .heading-2, .heading-3 { font-size:30px; line-height:36px; }
+    .hero { padding-top:96px; }
+    .eyebrow { margin-bottom:16px; flex-direction:column; gap:4px; }
+    .eyebrow span + span::before { content:none; }
+    .hero h1 { margin-bottom:16px; }
+    .lead { font-size:16px; line-height:24px; margin-bottom:24px; }
+    .assure { margin-top:24px; }
+          .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .stat { padding:16px 16px 24px; }
+    .stat:nth-child(odd) { border-left:0; padding-left:0; }
+    .stat:nth-child(n+3) { border-top:1px solid var(--dark-2); }
+    .stat b { font-size:24px; line-height:32px; }
+    .sec { padding:64px 0; }
+    .sec-head { margin-bottom:24px; }
+    .bento { gap:12px; }
+      .pcard h3 { font-size:20px; line-height:28px; }
+    .pcard .sub { margin-bottom:12px; }
+    .specs { margin-bottom:12px; gap:4px; }
+    .res-wrap { margin-top:48px; }
+    .tagline { padding:64px 0 80px; }
+    .tagline p { font-size:24px; line-height:32px; }
+    .tool { padding:40px 0; }
+    .dlist li { grid-template-columns:1fr; gap:4px; }
+    .contact { padding:32px 16px; border-radius:16px; }
+    .crow { flex-wrap:wrap; }
+    dl.facts { grid-template-columns:1fr; }
+    dl.facts dt { padding-bottom:0; border-bottom:0; }
+    dl.facts dd { padding-top:4px; }
+    .zh { padding:24px 16px; }
+    body { padding-bottom:80px; }
+    .mbar { display:grid; grid-template-columns:1fr 1fr 1.2fr; gap:8px; position:fixed; left:0; right:0; bottom:0; z-index:var(--z-nav); padding:8px 12px calc(8px + env(safe-area-inset-bottom)); background:rgba(255,255,255,.86); -webkit-backdrop-filter:saturate(180%) blur(16px); backdrop-filter:saturate(180%) blur(16px); border-top:1px solid var(--line); }
+    .mbar a { display:flex; align-items:center; justify-content:center; gap:8px; height:48px; border-radius:8px; font-size:14px; line-height:20px; font-weight:600; background:var(--surface); color:var(--ink); transition:background-color 300ms var(--ease), transform 500ms var(--ease); }
+    .mbar a:active { transform:scale(0.98); }
+    .mbar a.q { background:var(--accent); color:#fff; }
+    .mbar .ic { font-size:18px; }
+    .menu-open .mbar { visibility:hidden; }
   }
-  @media (max-width:440px) { .stats b { font-size:22px; } .cards4 { grid-template-columns:1fr; } .pcard { flex-direction:row; gap:14px; align-items:flex-start; padding:12px; } .pcard .ph { flex:0 0 112px; } .pcard .body { flex:1; } .pcard h3 { margin-top:2px; } }
+
+  /* hero module, 2x2 module grid, resource list, faq contact card */
+  .hero-shot { grid-column:7 / span 6; display:flex; flex-direction:column; align-items:center; padding-bottom:48px; }
+  .hero-shot > a { display:block; width:72%; max-width:420px; transition:transform 500ms var(--ease); }
+  .hero-shot > a:hover { transform:translateY(-4px); }
+  .hero-shot img { width:100%; }
+  .hero-shot figcaption { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px; margin-top:24px; color:var(--on-dark-muted); }
+  .hero-shot figcaption span:first-child { color:#fff; }
+  .hero-shot figcaption a { display:inline-flex; align-items:center; gap:8px; color:var(--accent-on-dark); }
+  .hero-shot figcaption a:hover { color:#fff; }
+  .bento { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .bento .pcard { grid-column:auto; grid-row:auto; flex-direction:row; align-items:stretch; }
+  .bento .pcard .ph { flex:0 0 44%; aspect-ratio:auto; min-height:240px; padding:32px; }
+  .bento .pcard .body { padding:32px 32px 32px 8px; }
+  .res { grid-column:1 / -1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:48px; border-top:0; }
+  .res a { border-top:1px solid var(--line); border-bottom:0; }
+  .res a:nth-last-child(-n+2) { border-bottom:1px solid var(--line); }
+  .res-head { margin-bottom:8px; }
+  .frame picture, .frame img { display:block; width:100%; }
+  .ask { margin-top:24px; display:flex; flex-direction:column; align-items:flex-start; gap:12px; padding:24px; border-radius:16px; background:var(--surface); }
+  .ask p { color:var(--text); margin:0 0 4px; }
+  .ask-row { display:inline-flex; align-items:center; gap:8px; color:var(--ink); font-size:14px; line-height:20px; }
+  .ask-row:hover { color:var(--accent); }
+  @media (max-width:960px) {
+    .hero-shot { grid-column:1 / -1; }
+    .hero-shot > a { width:56%; }
+    .bento { grid-template-columns:1fr; }
+  }
+  @media (max-width:640px) {
+    .hero-shot { padding-bottom:40px; }
+    .hero-shot > a { width:64%; }
+    .hero-shot figcaption { margin-top:16px; font-size:12px; line-height:16px; }
+    .bento .pcard .ph { flex:0 0 120px; min-height:0; padding:16px 8px; }
+    .bento .pcard .body { padding:16px 16px 16px 4px; }
+    .res { grid-template-columns:1fr; }
+    .res a:nth-last-child(-n+2) { border-bottom:0; }
+    .res a:last-child { border-bottom:1px solid var(--line); }
+    .tagline p { font-size:30px; line-height:36px; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    html { scroll-behavior:auto; }
+    *, *::before, *::after { transition-duration:300ms !important; transition-delay:0ms !important; animation:none !important; }
+    .js [data-reveal] { transform:none; }
+    .mpanel li { transform:none; }
+    .tagline .w { color:var(--ink); }
+    .btn:hover .ic, .tlink:hover .ic, .pcard:hover .more .ic, .pcard:hover .ph img, .res a:hover .go, .frame:hover, .hero-shot > a:hover { transform:none; }
+  }
 </style>
+<script>document.documentElement.classList.add('js');</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -213,159 +449,265 @@
       "sameAs": ["https://github.com/ErdiTech/laser-rangefinder-module-database", "https://doi.org/10.5281/zenodo.24125641"],
       "license": "https://opensource.org/licenses/MIT",
       "creator": { "@id": "https://erdilrf.com/#organization" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://erditech.com/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "What is ERDI TECH?", "acceptedAnswer": { "@type": "Answer", "text": "ERDI TECH LTD (ErdiTech, 铒迪科技（成都）有限公司) is a company in Chengdu, China, founded on 7 May 2021. It makes 905 nm and 1535 nm laser rangefinder modules and single point LiDAR sensors." } },
+        { "@type": "Question", "name": "Are ERDI TECH, ERDI LASER and ERDILRF the same company?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. ERDI TECH LTD is the maker. ERDI LASER and ERDILRF are the names its modules are sold under, and erdilrf.com is the catalog and order site." } },
+        { "@type": "Question", "name": "How do erditech.com and erdilrf.com differ?", "acceptedAnswer": { "@type": "Answer", "text": "erditech.com is the brand home and hosts the free tools, data and drivers. Specs, datasheets, prices and orders for all 59 modules are on erdilrf.com." } },
+        { "@type": "Question", "name": "Which wavelengths do ERDI modules use?", "acceptedAnswer": { "@type": "Answer", "text": "The catalog covers 905 nm and 1535 nm modules. Every model has published specs on erdilrf.com/models/." } },
+        { "@type": "Question", "name": "Are the decoder, database and drivers free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The UART decoder and the module database are MIT licensed, and the drivers for Python, Arduino, ROS 2, MicroPython, CircuitPython, ESPHome and STM32 are open source on github.com/ErdiTech." } },
+        { "@type": "Question", "name": "Can I use an ERDI module with ArduPilot or PX4?", "acceptedAnswer": { "@type": "Answer", "text": "There is a wiring guide for UART rangefinders on Pixhawk, ArduPilot and PX4, and an ArduPilot serial driver has been submitted upstream as pull request 34983." } },
+        { "@type": "Question", "name": "Where can engineers ask technical questions?", "acceptedAnswer": { "@type": "Answer", "text": "On community.erditech.com, a Q&A forum answered by ERDI engineers in English, Chinese, Japanese, German and Spanish." } },
+        { "@type": "Question", "name": "How do I get a quote?", "acceptedAnswer": { "@type": "Answer", "text": "Send your application, target and range through erdilrf.com/contact/, by email to tommy@erdimail.com or on WhatsApp at +86 133 0819 5790. You get a model recommendation, datasheet and quote." } }
+      ]
     }
   ]
 }
 </script>
 </head>
 <body>
-<header class="site">
-  <div class="wrap bar">
-    <a class="brand" href="/" aria-label="ERDI TECH home"><img src="/assets/img/erdi-logo.webp" alt="ERDI LASER logo" width="674" height="96"></a>
-    <nav class="menu" aria-label="Main">
-      <a href="#modules">Modules</a>
-      <a href="#tools">Open tools</a>
-      <a href="https://community.erditech.com/">Community</a>
-      <a href="#company">Company</a>
-      <a href="#zh" lang="zh-CN">中文</a>
+<a class="skip" href="#main">Skip to content</a>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol>
+  <symbol id="i-out" viewBox="0 0 256 256"><path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 256 256"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72A24,24,0,0,1,99.29,80.46l11.48,23L101,118a8,8,0,0,0-.73,7.51,56.47,56.47,0,0,0,30.15,30.15A8,8,0,0,0,138,155l14.61-9.74,23,11.48A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 256 256"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></symbol>
+  <symbol id="i-github" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"/></symbol>
+</svg>
+
+<header class="nav" id="top">
+  <div class="nav-bar">
+    <a class="brand" href="/" aria-label="ERDI TECH home"><img src="/assets/img/erdi-logo.webp" alt="ERDI LASER logo" width="674" height="96"><span class="brand-sub caption-4 mono">ERDI TECH LTD</span></a>
+    <nav aria-label="Main">
+      <ul class="nav-links title-4">
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#tools">Open tools</a></li>
+        <li><a href="https://community.erditech.com/">Community</a></li>
+        <li><a href="#company">Company</a></li>
+        <li><a href="#zh" lang="zh-CN">中文</a></li>
+      </ul>
     </nav>
-    <a class="btn primary sm" href="https://erdilrf.com/contact/">Get a quote</a>
+    <a class="btn btn-primary btn-sm nav-cta" href="https://erdilrf.com/contact/">Get a quote</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mpanel"><span class="burger" aria-hidden="true"></span><span class="menu-label">Menu</span></button>
   </div>
 </header>
+<div class="mpanel" id="mpanel" aria-label="Menu">
+  <ul class="heading-6">
+    <li><a href="#modules">Modules <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+    <li><a href="#tools">Open tools <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+    <li><a href="https://community.erditech.com/">Community <svg class="ic" aria-hidden="true"><use href="#i-out"/></svg></a></li>
+    <li><a href="#faq">Questions <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+    <li><a href="#company">Company <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+    <li><a href="#zh" lang="zh-CN">中文 <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+    <li><a class="btn btn-primary" href="https://erdilrf.com/contact/">Get a quote</a></li>
+  </ul>
+</div>
 
-<main>
-  <section class="hero">
+<main id="main">
+  <section class="hero" aria-labelledby="hero-title">
     <div class="wrap hero-grid">
-      <div>
-        <p class="eyebrow">ERDI TECH LTD (ErdiTech) · maker of ERDI LASER / ERDILRF modules · Chengdu, since 2021</p>
-        <h1>ERDI TECH laser rangefinder modules</h1>
-        <p class="lead">905 nm and 1535 nm modules for drones, robots and measurement, sold worldwide as <strong>ERDILRF</strong> with published specs, datasheets and prices.</p>
+      <div class="hero-copy">
+        <p class="eyebrow caption-1 mono"><span>ERDI TECH LTD (ErdiTech)</span><span>Chengdu, since 2021</span></p>
+        <h1 id="hero-title" class="heading-1">Laser rangefinder modules with public specs and prices</h1>
+        <p class="lead title-2"><strong>ERDI TECH makes 59 models at 905 nm and 1535 nm</strong> for drones, robots and measurement, sold worldwide as ERDILRF and ERDI LASER. Every model has a published datasheet and price.</p>
         <div class="actions">
-          <a class="btn primary" href="https://erdilrf.com/models/">Browse all modules</a>
-          <a class="btn" href="https://erdilrf.com/laser-rangefinder-module-price/">Price list</a>
+          <a class="btn btn-primary" href="https://erdilrf.com/models/">Browse all 59 modules <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="tlink" href="https://erdilrf.com/laser-rangefinder-module-price/">See the price list <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </div>
+        <ul class="assure body-6" aria-label="Buying terms on erdilrf.com">
+          <li>MOQ one piece</li>
+          <li>PayPal or bank transfer</li>
+          <li><a href="https://erdilrf.com/how-to-buy/">Sample and production quotes</a></li>
+        </ul>
       </div>
-      <figure class="hero-img"><img src="/assets/img/lrf3000a1.webp" alt="ERDILRF LRF3000A1 905 nm laser rangefinder module" width="720" height="720" fetchpriority="high"></figure>
+      <figure class="hero-shot">
+        <a href="https://erdilrf.com/models/lrf0818c/"><img src="/assets/img/lrf0818c-cut.webp" alt="ERDILRF LRF0818C 1535 nm laser rangefinder module" width="349" height="338" fetchpriority="high"></a>
+        <figcaption class="caption-1 mono"><span>LRF0818C</span><span>1535 nm rangefinder module</span><a href="https://erdilrf.com/models/lrf0818c/">Specs <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a></figcaption>
+      </figure>
+    </div>
+    <div class="stats" aria-label="ERDI TECH in numbers">
+      <div class="wrap stats-grid">
+        <div class="stat"><b class="num">2021</b><span class="body-6">founded in Chengdu, China</span></div>
+        <div class="stat"><b class="num">59</b><span class="body-6">models with published specs</span></div>
+        <div class="stat"><b class="num">905 / 1535 nm</b><span class="body-6">wavelengths in the catalog</span></div>
+        <div class="stat"><b class="num">7</b><span class="body-6">open source driver libraries</span></div>
+      </div>
     </div>
   </section>
 
-  <section class="stats" aria-label="ERDI TECH in numbers">
-    <div class="wrap stats-grid">
-      <div><b>2021</b><span>founded in Chengdu, China</span></div>
-      <div><b>59</b><span>models with published specs</span></div>
-      <div><b>905 / 1535 nm</b><span>wavelengths in the catalog</span></div>
-      <div><b>7</b><span>open-source driver libraries</span></div>
-    </div>
-  </section>
-
-  <section id="modules" class="sec">
+  <section id="modules" class="sec" aria-labelledby="modules-title">
     <div class="wrap">
-      <div class="sec-head"><h2>Featured modules</h2><a href="https://erdilrf.com/models/">All 59 models on erdilrf.com →</a></div>
-      <div class="cards4">
+      <div class="sec-head" data-reveal>
+        <div><h2 id="modules-title" class="heading-3">Featured modules</h2></div>
+        <a class="tlink" href="https://erdilrf.com/models/">All 59 models on erdilrf.com <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+      <div class="bento" data-reveal>
         <a class="pcard" href="https://erdilrf.com/models/lrf3000a1/">
-          <div class="ph"><img src="/assets/img/lrf3000a1.webp" alt="LRF3000A1 laser rangefinder module" width="720" height="720" loading="lazy"></div>
-          <div class="body"><h3>LRF3000A1</h3><p class="sub">905 nm laser rangefinder module</p>
-          <ul class="chips"><li>3 km</li><li>UART 3.3 V TTL</li><li>12 g</li></ul>
-          <span class="more">View specs →</span></div>
+          <div class="ph"><img src="/assets/img/lrf3000a1-cut.webp" alt="LRF3000A1 laser rangefinder module" width="376" height="545" loading="lazy"></div>
+          <div class="body"><h3 class="heading-6">LRF3000A1</h3><p class="sub body-6">905 nm laser rangefinder module</p>
+          <ul class="specs caption-4 mono"><li>3 km</li><li>UART 3.3 V TTL</li><li>12 g</li></ul>
+          <span class="more body-6">View specs <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
         </a>
         <a class="pcard" href="https://erdilrf.com/models/lr1200e2/">
-          <div class="ph"><img src="/assets/img/lr1200e2.webp" alt="LR1200E2 laser rangefinder module" width="560" height="560" loading="lazy"></div>
-          <div class="body"><h3>LR1200E2</h3><p class="sub">905 nm laser rangefinder module</p>
-          <ul class="chips"><li>4–1200 m</li><li>UART-TTL</li><li>≤10 g</li></ul>
-          <span class="more">View specs →</span></div>
+          <div class="ph"><img src="/assets/img/lr1200e2-cut.webp" alt="LR1200E2 laser rangefinder module" width="291" height="249" loading="lazy"></div>
+          <div class="body"><h3 class="heading-6">LR1200E2</h3><p class="sub body-6">905 nm laser rangefinder module</p>
+          <ul class="specs caption-4 mono"><li>4–1200 m</li><li>UART-TTL</li><li>≤10 g</li></ul>
+          <span class="more body-6">View specs <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
         </a>
         <a class="pcard" href="https://erdilrf.com/models/spd1200n2/">
-          <div class="ph"><img src="/assets/img/spd1200n2.webp" alt="SPD1200N2 laser rangefinder module" width="560" height="560" loading="lazy"></div>
-          <div class="body"><h3>SPD1200N2</h3><p class="sub">905 nm laser rangefinder module</p>
-          <ul class="chips"><li>≤5 g</li><li>UART-TTL</li><li>7.2 × 14.7 × 21.3 mm</li></ul>
-          <span class="more">View specs →</span></div>
+          <div class="ph"><img src="/assets/img/spd1200n2-cut.webp" alt="SPD1200N2 laser rangefinder module" width="377" height="273" loading="lazy"></div>
+          <div class="body"><h3 class="heading-6">SPD1200N2</h3><p class="sub body-6">905 nm laser rangefinder module</p>
+          <ul class="specs caption-4 mono"><li>≤5 g</li><li>UART-TTL</li><li>7.2 × 14.7 × 21.3 mm</li></ul>
+          <span class="more body-6">View specs <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
         </a>
         <a class="pcard" href="https://erdilrf.com/models/lrf0818c/">
-          <div class="ph"><img src="/assets/img/lrf0818c.webp" alt="LRF0818C 1535 nm laser rangefinder module" width="560" height="560" loading="lazy"></div>
-          <div class="body"><h3>LRF0818C</h3><p class="sub">1535 nm rangefinder module</p>
-          <ul class="chips"><li>1535 nm</li><li>TTL</li><li>4.5–16 V</li></ul>
-          <span class="more">View specs →</span></div>
+          <div class="ph"><img src="/assets/img/lrf0818c-cut.webp" alt="LRF0818C 1535 nm laser rangefinder module" width="349" height="338" loading="lazy"></div>
+          <div class="body"><h3 class="heading-6">LRF0818C</h3><p class="sub body-6">1535 nm rangefinder module</p>
+          <ul class="specs caption-4 mono"><li>1535 nm</li><li>TTL</li><li>4.5–16 V</li></ul>
+          <span class="more body-6">View specs <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
         </a>
       </div>
-      <div class="links-row">
-        <a href="https://erdilrf.com/selector/">Module selector</a>
-        <a href="https://erdilrf.com/downloads/">Datasheets and CAD</a>
-        <a href="https://erdilrf.com/docs/">Integration docs</a>
-        <a href="https://community.erditech.com/">Engineering community (Q&amp;A)</a>
-        <a href="https://erdilrf.com/knowledge/">Engineering guides</a>
-        <a href="https://erdilrf.com/how-to-buy/">How to buy</a>
+
+      <div class="res-wrap" data-reveal>
+        <div class="res-head"><h2 class="heading-5">Pick, wire and buy a module</h2></div>
+        <nav class="res" aria-label="Engineering resources">
+          <a href="https://erdilrf.com/selector/"><h3 class="title-3">Module selector</h3><p class="body-6">Filter by wavelength, range, accuracy, weight, size and price, compare four, export CSV.</p><svg class="ic go" aria-hidden="true"><use href="#i-out"/></svg></a>
+          <a href="https://erdilrf.com/downloads/"><h3 class="title-3">Datasheets and CAD</h3><p class="body-6">Datasheets, user manuals, UART protocol notes and 3D references for 59 models.</p><svg class="ic go" aria-hidden="true"><use href="#i-out"/></svg></a>
+          <a href="https://erdilrf.com/docs/"><h3 class="title-3">Integration docs</h3><p class="body-6">Developer documentation: a first reading in five minutes and compatibility at a glance.</p><svg class="ic go" aria-hidden="true"><use href="#i-out"/></svg></a>
+          <a href="https://community.erditech.com/"><h3 class="title-3">Engineering community (Q&amp;A)</h3><p class="body-6">Search answered questions by model or keyword, or ask a new one. ERDI engineers reply.</p><svg class="ic go" aria-hidden="true"><use href="#i-out"/></svg></a>
+          <a href="https://erdilrf.com/knowledge/"><h3 class="title-3">Engineering guides</h3><p class="body-6">Notes on 905 nm DToF ranging, 1535 nm, UART protocols and flight controllers.</p><svg class="ic go" aria-hidden="true"><use href="#i-out"/></svg></a>
+          <a href="https://erdilrf.com/how-to-buy/"><h3 class="title-3">How to buy</h3><p class="body-6">MOQ one piece, PayPal or bank transfer, sample and production quotes.</p><svg class="ic go" aria-hidden="true"><use href="#i-out"/></svg></a>
+        </nav>
+        
       </div>
     </div>
   </section>
 
-  <section id="tools" class="sec alt">
+  <section class="tagline" aria-label="What you get">
     <div class="wrap">
-      <div class="sec-head"><h2>Open tools for engineers</h2><a href="https://github.com/ErdiTech">github.com/ErdiTech →</a></div>
-      <div class="cards2">
-        <div class="tcard">
-          <span class="tag">Free · MIT</span>
-          <h3><a href="https://erditech.com/lrf-uart-protocol-decoder/">LiDAR / laser rangefinder UART decoder</a></h3>
-          <p>Paste a hex dump or connect a module over WebSerial. It detects the protocol and baud rate, converts frames to metres and flags checksum errors, for Benewake, LightWare, Chengdu JRT, Nooploop, DFRobot and ERDI modules.</p>
-          <div class="tlinks"><a href="https://erditech.com/lrf-uart-protocol-decoder/">Open in browser</a><a href="https://github.com/ErdiTech/lrf-uart-protocol-decoder">Source</a><a href="https://pypi.org/project/lrf-uart-decoder/"><code>pip install lrf-uart-decoder</code></a></div>
-        </div>
-        <div class="tcard">
-          <span class="tag">Open data · DOI</span>
-          <h3><a href="https://erditech.com/laser-rangefinder-module-database/">Laser rangefinder and LiDAR module database</a></h3>
-          <p>A sortable comparison of modules from many makers by range, wavelength, accuracy, update rate, interface, weight, size and public price, with the maker's source URL and capture date on every row.</p>
-          <div class="tlinks"><a href="https://erditech.com/laser-rangefinder-module-database/">Open the table</a><a href="https://erditech.com/laser-rangefinder-module-database/alternatives/">Alternatives</a><a href="https://erditech.com/laser-rangefinder-module-database/guides/">Selection guides</a><a href="https://doi.org/10.5281/zenodo.24125641">Zenodo DOI</a></div>
-        </div>
+      <p class="heading-2 js-words">Every spec and price is public.<br>Every driver is open source.</p>
+    </div>
+  </section>
+
+  <section id="tools" class="sec tools" aria-labelledby="tools-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div><h2 id="tools-title" class="heading-3">Open tools for engineers</h2></div>
+        <a class="tlink" href="https://github.com/ErdiTech"><svg class="ic" aria-hidden="true"><use href="#i-github"/></svg> github.com/ErdiTech <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </div>
-      <details class="more-list">
-        <summary>Drivers and integration guides</summary>
-        <ul>
-          <li>Python: <a href="https://pypi.org/project/erdi-lrf/"><code>pip install erdi-lrf</code></a> (<a href="https://github.com/ErdiTech/erdi-lrf-drivers">source</a>)</li>
-          <li>Arduino and PlatformIO: <a href="https://github.com/ErdiTech/ErdiLRF">ErdiLRF</a></li>
-          <li>ROS 2: <a href="https://github.com/ErdiTech/erdi_lrf_driver">erdi_lrf_driver</a></li>
-          <li>MicroPython on ESP32: <a href="https://github.com/ErdiTech/erdi-lrf-esp32-micropython">erdi-lrf-esp32-micropython</a></li>
-          <li>CircuitPython: <a href="https://github.com/ErdiTech/CircuitPython_ERDI_LRF">CircuitPython_ERDI_LRF</a></li>
-          <li>ESPHome and Home Assistant: <a href="https://github.com/ErdiTech/erdi-lrf-home-assistant">erdi-lrf-home-assistant</a></li>
-          <li>STM32 HAL: <a href="https://github.com/ErdiTech/erdi-lrf-stm32-hal">erdi-lrf-stm32-hal</a></li>
-          <li>ArduPilot serial driver: <a href="https://github.com/ArduPilot/ardupilot/pull/34983">submitted upstream (#34983)</a></li>
-          <li><a href="https://github.com/ErdiTech/drone-altimeter-laser-rangefinder-guide">Using a laser rangefinder as a UAV altimeter</a></li>
-          <li><a href="https://github.com/ErdiTech/erdi-lrf-pixhawk-ardupilot">Wiring a UART rangefinder to Pixhawk / ArduPilot / PX4</a></li>
-          <li><a href="https://github.com/ErdiTech/awesome-laser-rangefinder">awesome-laser-rangefinder</a></li>
+
+      <article class="tool" data-reveal>
+        <div class="tool-copy">
+          <span class="kicker caption-4 mono">Free / MIT</span>
+          <h3 class="heading-5"><a href="https://erditech.com/lrf-uart-protocol-decoder/">LiDAR / laser rangefinder UART decoder</a></h3>
+          <p class="body-3">Paste a hex dump or connect a module over WebSerial. It detects the protocol and baud rate, converts frames to metres and flags checksum errors, for Benewake, LightWare, Chengdu JRT, Nooploop, DFRobot and ERDI modules.</p>
+          <div class="pip"><a href="https://pypi.org/project/lrf-uart-decoder/"><code>pip install lrf-uart-decoder</code></a></div>
+          <div class="tool-links body-6"><a class="tlink" href="https://erditech.com/lrf-uart-protocol-decoder/">Open in browser <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a><a href="https://github.com/ErdiTech/lrf-uart-protocol-decoder">Source</a><a href="https://pypi.org/project/lrf-uart-decoder/">PyPI</a></div>
+        </div>
+        <figure class="tool-vis">
+          <a class="frame" href="https://erditech.com/lrf-uart-protocol-decoder/"><picture><source media="(max-width:640px)" srcset="/assets/img/shot-decoder-m.webp" width="800" height="249"><img src="/assets/img/shot-decoder.webp" alt="Screenshot of the live UART decoder after decoding its built in example frames: 1.220 m, 2 valid frames, 0 checksum errors" width="1200" height="911" loading="lazy"></picture></a>
+        </figure>
+      </article>
+
+      <article class="tool flip" data-reveal>
+        <div class="tool-copy">
+          <span class="kicker caption-4 mono">Open data / DOI</span>
+          <h3 class="heading-5"><a href="https://erditech.com/laser-rangefinder-module-database/">Laser rangefinder and LiDAR module database</a></h3>
+          <p class="body-3">A sortable comparison of modules from many makers by range, wavelength, accuracy, update rate, interface, weight, size and public price, with the maker's source URL and capture date on every row.</p>
+          <div class="tool-links body-6"><a class="tlink" href="https://erditech.com/laser-rangefinder-module-database/">Open the table <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a><a href="https://erditech.com/laser-rangefinder-module-database/alternatives/">Alternatives</a><a href="https://erditech.com/laser-rangefinder-module-database/guides/">Selection guides</a><a href="https://doi.org/10.5281/zenodo.24125641">Zenodo DOI</a></div>
+        </div>
+        <figure class="tool-vis">
+          <a class="frame" href="https://erditech.com/laser-rangefinder-module-database/"><picture><source media="(max-width:640px)" srcset="/assets/img/shot-database-m.webp" width="800" height="479"><img src="/assets/img/shot-database.webp" alt="Screenshot of the module database with search, range, wavelength, interface and price filters above the comparison table" width="1200" height="644" loading="lazy"></picture></a>
+        </figure>
+      </article>
+
+      <div class="drivers" data-reveal>
+        <h3 class="heading-6">Drivers and integration guides</h3>
+        <ul class="dlist body-6">
+          <li><span class="k">Python</span><span class="v"><a href="https://pypi.org/project/erdi-lrf/"><code>pip install erdi-lrf</code></a> (<a href="https://github.com/ErdiTech/erdi-lrf-drivers">source</a>)</span></li>
+          <li><span class="k">Arduino and PlatformIO</span><span class="v"><a href="https://github.com/ErdiTech/ErdiLRF">ErdiLRF</a></span></li>
+          <li><span class="k">ROS 2</span><span class="v"><a href="https://github.com/ErdiTech/erdi_lrf_driver">erdi_lrf_driver</a></span></li>
+          <li><span class="k">MicroPython on ESP32</span><span class="v"><a href="https://github.com/ErdiTech/erdi-lrf-esp32-micropython">erdi-lrf-esp32-micropython</a></span></li>
+          <li><span class="k">CircuitPython</span><span class="v"><a href="https://github.com/ErdiTech/CircuitPython_ERDI_LRF">CircuitPython_ERDI_LRF</a></span></li>
+          <li><span class="k">ESPHome and Home Assistant</span><span class="v"><a href="https://github.com/ErdiTech/erdi-lrf-home-assistant">erdi-lrf-home-assistant</a></span></li>
+          <li><span class="k">STM32 HAL</span><span class="v"><a href="https://github.com/ErdiTech/erdi-lrf-stm32-hal">erdi-lrf-stm32-hal</a></span></li>
+          <li><span class="k">ArduPilot serial driver</span><span class="v"><a href="https://github.com/ArduPilot/ardupilot/pull/34983">submitted upstream (#34983)</a></span></li>
+          <li><span class="k">Guide</span><span class="v"><a href="https://github.com/ErdiTech/drone-altimeter-laser-rangefinder-guide">Using a laser rangefinder as a UAV altimeter</a></span></li>
+          <li><span class="k">Guide</span><span class="v"><a href="https://github.com/ErdiTech/erdi-lrf-pixhawk-ardupilot">Wiring a UART rangefinder to Pixhawk / ArduPilot / PX4</a></span></li>
+          <li><span class="k">List</span><span class="v"><a href="https://github.com/ErdiTech/awesome-laser-rangefinder">awesome-laser-rangefinder</a></span></li>
         </ul>
-      </details>
+      </div>
     </div>
   </section>
 
-  <section id="contact" class="sec">
-    <div class="wrap">
-      <div class="contact">
-        <div>
-          <h2>Talk to sales</h2>
-          <p>Send your application, target and range. You get a model recommendation, datasheet and quote.</p>
-          <p class="who">Tommy Yu, Overseas Sales · ERDI TECH LTD</p>
+  <section id="faq" class="sec" aria-labelledby="faq-title">
+    <div class="wrap faq">
+      <div class="faq-head" data-reveal>
+        <h2 id="faq-title" class="heading-3">Common questions</h2>
+        <div class="ask">
+          <p class="body-3">Not covered here? Send your application, target and range.</p>
+          <a class="btn btn-primary" href="https://erdilrf.com/contact/">Get a quote <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="ask-row" href="mailto:tommy@erdimail.com"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg>tommy@erdimail.com</a>
+          <a class="ask-row" href="https://wa.me/8613308195790"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp +86 133 0819 5790</a>
         </div>
-        <div class="acts">
-          <a class="btn light" href="https://erdilrf.com/contact/">Send a requirement</a>
-          <a class="btn ghost" href="mailto:tommy@erdimail.com">Email · tommy@erdimail.com</a>
-          <a class="btn ghost" href="https://wa.me/8613308195790">WhatsApp · +86 133 0819 5790</a>
+      </div>
+      <dl data-reveal>
+        <dt class="title-2">What is ERDI TECH?</dt>
+        <dd class="body-3">ERDI TECH LTD (ErdiTech, 铒迪科技（成都）有限公司) is a company in Chengdu, China, founded on 7 May 2021. It makes 905 nm and 1535 nm laser rangefinder modules and single point LiDAR sensors.</dd>
+        <dt class="title-2">Are ERDI TECH, ERDI LASER and ERDILRF the same company?</dt>
+        <dd class="body-3">Yes. ERDI TECH LTD is the maker. ERDI LASER and ERDILRF are the names its modules are sold under, and <a href="https://erdilrf.com/">erdilrf.com</a> is the catalog and order site.</dd>
+        <dt class="title-2">How do erditech.com and erdilrf.com differ?</dt>
+        <dd class="body-3">erditech.com is the brand home and hosts the free tools, data and drivers. Specs, datasheets, prices and orders for all 59 modules are on <a href="https://erdilrf.com/models/">erdilrf.com</a>.</dd>
+        <dt class="title-2">Which wavelengths do ERDI modules use?</dt>
+        <dd class="body-3">The catalog covers 905 nm and 1535 nm modules. Every model has published specs on <a href="https://erdilrf.com/models/">erdilrf.com/models/</a>.</dd>
+        <dt class="title-2">Are the decoder, database and drivers free?</dt>
+        <dd class="body-3">Yes. The UART decoder and the module database are MIT licensed, and the drivers for Python, Arduino, ROS 2, MicroPython, CircuitPython, ESPHome and STM32 are open source on <a href="https://github.com/ErdiTech">github.com/ErdiTech</a>.</dd>
+        <dt class="title-2">Can I use an ERDI module with ArduPilot or PX4?</dt>
+        <dd class="body-3">There is a <a href="https://github.com/ErdiTech/erdi-lrf-pixhawk-ardupilot">wiring guide for UART rangefinders on Pixhawk, ArduPilot and PX4</a>, and an ArduPilot serial driver has been submitted upstream as <a href="https://github.com/ArduPilot/ardupilot/pull/34983">pull request 34983</a>.</dd>
+        <dt class="title-2">Where can engineers ask technical questions?</dt>
+        <dd class="body-3">On <a href="https://community.erditech.com/">community.erditech.com</a>, a Q&amp;A forum answered by ERDI engineers in English, 中文, 日本語, Deutsch and Español.</dd>
+        <dt class="title-2">How do I get a quote?</dt>
+        <dd class="body-3">Send your application, target and range through <a href="https://erdilrf.com/contact/">erdilrf.com/contact/</a>, by email to <a href="mailto:tommy@erdimail.com">tommy@erdimail.com</a> or on <a href="https://wa.me/8613308195790">WhatsApp at +86 133 0819 5790</a>. You get a model recommendation, datasheet and quote.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section id="contact" class="sec sec-contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <div class="contact" data-reveal>
+        <div class="contact-copy">
+          <h2 id="contact-title" class="heading-3">Talk to sales</h2>
+          <p class="title-2">Send your application, target and range. You get a model recommendation, datasheet and quote.</p>
+          <p class="who body-6">Tommy Yu, Overseas Sales · ERDI TECH LTD</p>
+        </div>
+        <div class="contact-acts">
+          <a class="btn btn-light" href="https://erdilrf.com/contact/">Send a requirement <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="crow" href="mailto:tommy@erdimail.com"><span><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg>Email</span><small class="mono">tommy@erdimail.com</small></a>
+          <a class="crow" href="https://wa.me/8613308195790"><span><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</span><small class="mono">+86 133 0819 5790</small></a>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="company" class="sec alt">
-    <div class="wrap company">
-      <div>
-        <div class="sec-head"><h2>Company</h2></div>
-        <dl class="facts">
+  <section id="company" class="sec company" aria-labelledby="company-title">
+    <div class="wrap company-grid">
+      <div class="company-facts" data-reveal>
+        <h2 id="company-title" class="heading-3">Company</h2>
+        <dl class="facts body-3">
           <dt>Legal name</dt><dd>ERDI TECH LTD (铒迪科技（成都）有限公司)</dd>
           <dt>Founded</dt><dd>7 May 2021, Chengdu, China</dd>
           <dt>Address</dt><dd>Room 2812, 28/F, Building 3, No. 88 Jiaozi Avenue, Chengdu Hi-Tech Zone, Sichuan 610041, China</dd>
-          <dt>Products</dt><dd>905 nm and 1535 nm laser rangefinder modules, single-point LiDAR sensors (brand: ERDILRF)</dd>
+          <dt>Products</dt><dd>905 nm and 1535 nm laser rangefinder modules, single point LiDAR sensors (brand: ERDILRF)</dd>
           <dt>Catalog and orders</dt><dd><a href="https://erdilrf.com/">erdilrf.com</a></dd>
           <dt>Open source</dt><dd><a href="https://github.com/ErdiTech">github.com/ErdiTech</a></dd>
         </dl>
       </div>
-      <div id="zh" class="zh" lang="zh-CN">
-        <h2>铒迪科技 ERDI TECH</h2>
+      <div id="zh" class="zh" lang="zh-CN" data-reveal>
+        <h2 class="heading-6">铒迪科技 ERDI TECH</h2>
         <p>铒迪科技（成都）有限公司（ERDI TECH LTD）生产 905 nm 和 1535 nm 激光测距模块，以 ERDILRF 品牌面向全球销售，用于无人机定高、机器人避障、测绘和工业测距。中文产品目录和公开价格见 <a href="https://erdilrf.com/zh/">erdilrf.com/zh/</a>；选型和报价请联系 Tommy Yu（海外销售）：<a href="mailto:tommy@erdimail.com">tommy@erdimail.com</a>，WhatsApp +86 133 0819 5790。</p>
       </div>
     </div>
@@ -374,15 +716,97 @@
 
 <footer class="site">
   <div class="wrap">
-    <span>© ERDI TECH LTD · Laser rangefinder modules: <a href="https://erdilrf.com/">erdilrf.com</a> · <a href="https://erdilrf.com/erdi-laser/">ERDI LASER</a> · <a href="https://erdilrf.com/erdi-tech/">About ERDI TECH</a> · <a href="https://erdilrf.com/zh/erdi-laser/">铒迪激光</a> · <a href="https://erdilrf.com/zh/erdi-tech/">铒迪科技</a> · <a href="https://community.erditech.com/">Engineering community</a></span>
-    <span>Found a bug in the tools? Open an issue on <a href="https://github.com/ErdiTech">GitHub</a>.</span>
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="/assets/img/erdi-logo.webp" alt="ERDI LASER logo" width="674" height="96" loading="lazy">
+        <p class="body-6">© ERDI TECH LTD · Laser rangefinder modules: <a href="https://erdilrf.com/">erdilrf.com</a></p>
+      </div>
+      <ul class="foot-links body-6">
+        <li><a href="https://erdilrf.com/erdi-laser/">ERDI LASER</a></li>
+        <li><a href="https://erdilrf.com/erdi-tech/">About ERDI TECH</a></li>
+        <li><a href="https://erdilrf.com/zh/erdi-laser/" lang="zh-CN">铒迪激光</a></li>
+        <li><a href="https://erdilrf.com/zh/erdi-tech/" lang="zh-CN">铒迪科技</a></li>
+        <li><a href="https://community.erditech.com/">Engineering community</a></li>
+        <li><a href="https://github.com/ErdiTech">GitHub</a></li>
+      </ul>
+    </div>
+    <div class="foot-legal body-6">
+      <span>Found a bug in the tools? Open an issue on <a href="https://github.com/ErdiTech">GitHub</a>.</span>
+      <span><a href="https://erdilrf.com/privacy-policy/">Privacy policy</a> · <a href="https://erdilrf.com/terms/">Terms</a> · <a href="#top">Back to top</a></span>
+    </div>
   </div>
 </footer>
 
 <nav class="mbar" aria-label="Contact">
-  <a class="wa" href="https://wa.me/8613308195790">WhatsApp</a>
-  <a href="mailto:tommy@erdimail.com">Email</a>
+  <a href="https://wa.me/8613308195790"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</a>
+  <a href="mailto:tommy@erdimail.com"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg>Email</a>
   <a class="q" href="https://erdilrf.com/contact/">Get a quote</a>
 </nav>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasIO = 'IntersectionObserver' in window;
+
+  // Mobile menu: full height panel, animated toggle
+  var btn = document.querySelector('.menu-btn'), panel = document.getElementById('mpanel'), label = btn.querySelector('.menu-label');
+  function setMenu(open) {
+    document.body.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    label.textContent = open ? 'Close' : 'Menu';
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+  }
+  btn.addEventListener('click', function () { setMenu(!document.body.classList.contains('menu-open')); });
+  panel.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && document.body.classList.contains('menu-open')) { setMenu(false); btn.focus(); } });
+
+  // Scroll reveals, once per section
+  var items = document.querySelectorAll('[data-reveal]');
+  if (!hasIO) { items.forEach(function (el) { el.classList.add('in'); }); }
+  else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+    items.forEach(function (el) { io.observe(el); });
+  }
+
+  // Tagline: words light up one by one as they cross a line at 60% of the viewport
+  var tl = document.querySelector('.js-words');
+  if (tl) {
+    var walker = document.createTreeWalker(tl, NodeFilter.SHOW_TEXT), nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function (node) {
+      var frag = document.createDocumentFragment();
+      node.textContent.split(/(\s+)/).forEach(function (part) {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+        var s = document.createElement('span'); s.className = 'w'; s.textContent = part; frag.appendChild(s);
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+    var words = tl.querySelectorAll('.w');
+    if (reduce || !hasIO) { words.forEach(function (w) { w.classList.add('on'); }); }
+    else {
+      var wio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('on'); wio.unobserve(en.target); } });
+      }, { rootMargin: '0px 0px -40% 0px', threshold: 1 });
+      words.forEach(function (w) { wio.observe(w); });
+    }
+  }
+
+  // Current section indicator in the navigation
+  if (hasIO) {
+    var links = {};
+    document.querySelectorAll('.nav-links a[href^="#"]').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a; });
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var a = links[en.target.id]; if (!a) return;
+        if (en.isIntersecting) { Object.keys(links).forEach(function (k) { links[k].removeAttribute('aria-current'); }); a.setAttribute('aria-current', 'true'); }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    Object.keys(links).forEach(function (id) { var s = document.getElementById(id); if (s) spy.observe(s); });
+  }
+})();
+</script>
 </body>
 </html>

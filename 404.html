@@ -5,14 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Page not found | ERDI TECH</title>
-<style>
-  :root { --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --link:#0969da; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --link:#4493f8; } }
-  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif; }
-  main { max-width:640px; margin:0 auto; padding:64px 16px; }
-  a { color:var(--link); }
-  p { color:var(--muted); }
-</style>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta name="theme-color" content="#ffffff">
 <script>
   // erditech.com only hosts the brand page and open tools. Paths that exist on erdilrf.com (the ERDI TECH catalog)
   // are sent there, e.g. erditech.com/models/ -> erdilrf.com/models/. Anything else (including links left over from
@@ -25,11 +20,49 @@
     if (erdilrf.indexOf(seg) !== -1) location.replace('https://erdilrf.com' + location.pathname + location.search + location.hash);
   })();
 </script>
+<style>
+  @font-face { font-family:"Geist"; src:url("/assets/fonts/geist-latin.woff2") format("woff2"); font-weight:100 900; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Geist Mono"; src:url("/assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight:100 900; font-style:normal; font-display:swap; }
+  :root { color-scheme:light; --bg:#ffffff; --surface:#f5f5f5; --line:#e5e5e5; --ink:#171717; --text:#313131; --muted:#666666; --accent:#1c5fc4; --accent-hover:#1850a5; --ease:cubic-bezier(0.22,1,0.36,1); }
+  *, *::before, *::after { box-sizing:border-box; }
+  body { margin:0; min-height:100dvh; display:flex; flex-direction:column; background:var(--bg); color:var(--text); font-family:"Geist","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif; font-size:16px; line-height:24px; -webkit-font-smoothing:antialiased; }
+  a { color:var(--accent); text-decoration:none; transition:color 300ms var(--ease); }
+  a:hover { color:var(--accent-hover); }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+  header { padding:24px 32px; }
+  header img { height:16px; width:auto; display:block; }
+  main { flex:1; width:100%; max-width:1280px; margin:0 auto; padding:64px 32px 96px; }
+  .code { margin:0 0 16px; color:var(--muted); font-family:"Geist Mono",ui-monospace,Consolas,monospace; font-size:12px; line-height:16px; font-weight:500; letter-spacing:0.02em; }
+  h1 { margin:0 0 16px; max-width:680px; font-size:48px; line-height:48px; font-weight:600; letter-spacing:-0.03em; text-wrap:balance; background:linear-gradient(90deg,#000000 0%,#666666 100%); -webkit-background-clip:text; background-clip:text; color:transparent; padding-bottom:4px; }
+  p.lead { margin:0 0 40px; max-width:560px; color:var(--muted); font-size:18px; line-height:28px; font-weight:500; text-wrap:pretty; }
+  .go { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; max-width:960px; border:1px solid var(--line); border-radius:16px; background:var(--line); overflow:hidden; }
+  .go a { display:flex; flex-direction:column; gap:4px; padding:24px; background:#fff; color:var(--text); transition:background-color 300ms var(--ease); }
+  .go a:hover { background:var(--surface); }
+  .go a:active { transform:scale(0.99); }
+  .go b { color:var(--ink); font-size:16px; line-height:24px; font-weight:500; }
+  .go span { color:var(--muted); font-size:14px; line-height:20px; }
+  @media (max-width:640px) {
+    header { padding:16px; }
+    main { padding:40px 16px 64px; }
+    h1 { font-size:36px; line-height:40px; }
+    p.lead { font-size:16px; line-height:24px; }
+    .go { grid-template-columns:1fr; }
+    .go a { padding:16px; }
+  }
+  @media (prefers-reduced-motion:reduce) { *, *::before, *::after { transition-duration:300ms !important; } }
+</style>
 </head>
 <body>
+<header><a href="/" aria-label="ERDI TECH home"><img src="/assets/img/erdi-logo.webp" alt="ERDI LASER logo" width="674" height="96"></a></header>
 <main>
+  <p class="code">404 / page not found</p>
   <h1>Page not found</h1>
-  <p>This address is not on erditech.com. ERDI TECH laser rangefinder modules, datasheets and prices are at <a href="https://erdilrf.com/">erdilrf.com</a>; our open tools are listed on the <a href="https://erditech.com/">ERDI TECH home page</a>.</p>
+  <p class="lead">This address is not on erditech.com. ERDI TECH laser rangefinder modules, datasheets and prices are at <a href="https://erdilrf.com/">erdilrf.com</a>; our open tools are listed on the <a href="https://erditech.com/">ERDI TECH home page</a>.</p>
+  <nav class="go" aria-label="Where to go next">
+    <a href="https://erditech.com/"><b>ERDI TECH home</b><span>Brand home, open tools and drivers</span></a>
+    <a href="https://erdilrf.com/models/"><b>All 59 modules</b><span>Catalog, specs and prices on erdilrf.com</span></a>
+    <a href="https://erdilrf.com/contact/"><b>Get a quote</b><span>Send your application, target and range</span></a>
+  </nav>
 </main>
 </body>
 </html>
