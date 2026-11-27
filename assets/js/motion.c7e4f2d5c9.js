@@ -215,6 +215,17 @@
     }
   });
 
+  /* tables that fit their column may let the header stick to the page (CSS: .fits) */
+  if (matchMedia('(min-width: 1400px)').matches) {
+    var fits = function (t) { return t.scrollWidth <= t.clientWidth + 1; };
+    document.querySelectorAll('.prose .tbl').forEach(function (t) {
+      if (!fits(t)) return;
+      t.classList.add('fits');
+      var w = t.closest('.wrap');
+      if (w && [].every.call(w.querySelectorAll('.tbl'), fits) && w.scrollWidth <= w.clientWidth + 1) w.classList.add('fits');
+    });
+  }
+
   /* ---------- back to top (after two screens) ---------- */
   var top = document.querySelector('.to-top');
   if (top) {
