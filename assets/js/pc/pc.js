@@ -52,7 +52,7 @@ export async function mount(canvas, opts) {
     outPos.set(Math.cos(ang) * r, y, Math.sin(ang) * r);
     outLook.set(40 * e, 470 - 140 * e, 120 * e);
   }
-  const tmp = new THREE.Vector3(), target = new THREE.Vector3();
+  const tmp = new THREE.Vector3(), target = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
 
   function groundAt(x, z) {
     const G = data.G, gx = Math.min(G - 1, Math.max(0, ((x - b[0]) / (b[3] - b[0]) * G) | 0));
@@ -64,18 +64,22 @@ export async function mount(canvas, opts) {
     const w = canvas.clientWidth, hh = canvas.clientHeight;
     renderer.setSize(w, hh, false); camera.aspect = w / hh; camera.fov = w < hh ? 66 : 42; camera.filmOffset = w < hh ? 1.5 : (opts.offset != null ? opts.offset : -6); camera.updateProjectionMatrix(); dirty = true;
   }
-  let p = 0, dirty = true;
+  let p = 0, dirty = true, visible = true;
+  const t0 = performance.now();
+  if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(canvas);
   size(); addEventListener('resize', size);
 
   function frame() {
-    if (dirty) {
+    if (dirty || visible) {
       dirty = false;
-      const t = Math.min(1, Math.max(0, p));
+      const t = Math.min(1, Math.max(0, p)), s = (performance.now() - t0) / 1000;
       pose(t, camera.position, target);
+      camera.position.applyAxisAngle(UP, THREE.MathUtils.degToRad(3.5 * Math.sin(s * 0.32)));
+      camera.position.y += 18 * Math.sin(s * 0.5);
       camera.position.y = Math.max(camera.position.y, groundAt(camera.position.x, camera.position.z) + 320);   // never inside the slope
       camera.lookAt(target);
       // scan line sweeps from the north edge (z = -maxy) to the south edge over the first 82% of the scroll
-      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85));
+      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3);
       renderer.render(scene, camera);
       if (opts.onReadout) {
         tmp.set(camera.position.x * 0.4, 0, uScan.value); tmp.y = groundAt(tmp.x, tmp.z);
