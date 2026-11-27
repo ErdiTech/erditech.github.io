@@ -226,6 +226,12 @@
     });
   }
 
+  /* looping decorations (marquee, mesh, caret, live dot, scroll cue) run only while on screen: no idle repaints */
+  if ('IntersectionObserver' in window) {
+    var loopIO = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('paused', !e.isIntersecting); }); });
+    document.querySelectorAll('.marquee, .contact-wrap, .term, .film-stage, .stream').forEach(function (el) { loopIO.observe(el); });
+  }
+
   /* ---------- back to top (after two screens) ---------- */
   var top = document.querySelector('.to-top');
   if (top) {
@@ -469,7 +475,25 @@
         'requestIdleCallback' in window ? requestIdleCallback(rest, { timeout: 1500 }) : setTimeout(rest, 400);
       }
       // frames start loading one screen before the film enters the viewport
-      new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { start(); io.disconnect(); } }, { rootMargin: '100% 0px' }).observe(sec);
+      var pcUrl = sec.dataset.pc, pcView = null, lastP = 0;
+      if (!pcUrl) new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { start(); io.disconnect(); } }, { rootMargin: '100% 0px' }).observe(sec);
+      /* real lidar point cloud (desktop, no Save-Data): loads after the page, only once the hero is on screen;
+         parsing runs in a worker; phones and Save-Data keep the rendered poster with a light parallax */
+      var netInfo = navigator.connection, lowData = !!(netInfo && netInfo.saveData);
+      if (pcUrl && !small && !lowData && window.Worker) {
+        var pcCanvas = sec.querySelector('.pc-canvas'), rd = sec.querySelector('.pc-readout b');
+        var go = function () {
+          import('/assets/js/pc/pc.js').then(function (mod) {
+            return mod.mount(pcCanvas, { url: pcUrl, onReadout: function (d) { if (rd) rd.textContent = d.toFixed(1); } });
+          }).then(function (v) { pcView = v; v.setProgress(lastP); sec.classList.add('pc-live'); doc.dataset.pc = v.backend; })
+            .catch(function () { sec.classList.add('pc-fail'); });
+        };
+        new IntersectionObserver(function (es, io) {
+          if (!es[0].isIntersecting) return; io.disconnect();
+          'requestIdleCallback' in window ? requestIdleCallback(go, { timeout: 1200 }) : setTimeout(go, 300);
+        }).observe(sec);
+      }
+
       function setLayers(p) {
         layers.forEach(function (el) {
           var a = +el.dataset.in, b = +el.dataset.out, f = 0.05, o = 0;
@@ -488,8 +512,8 @@
       ScrollTrigger.create({
         trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true,
         onUpdate: function (st) {
-          var p = st.progress;
-          draw(Math.min(count - 1, Math.round(p * (count - 1))));
+          var p = st.progress; lastP = p;
+          if (pcView) pcView.setProgress(p); else if (count) draw(Math.min(count - 1, Math.round(p * (count - 1))));
           setLayers(p);
           if (bar) bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
           if (zoom) {
