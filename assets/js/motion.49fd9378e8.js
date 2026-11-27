@@ -187,18 +187,21 @@
   }
 
   /* ---------- tables: each cell carries its column name, so phones can show rows as cards ---------- */
+  var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 200); };
   function labelTables(root) {
     root.querySelectorAll('table').forEach(function (t) {
       var heads = [].map.call(t.querySelectorAll('thead th'), function (th) { return th.textContent.trim(); });
       if (!heads.length) return;
-      t.classList.add('cards');
-      t.querySelectorAll('tbody tr').forEach(function (tr) {
-        [].forEach.call(tr.children, function (td, i) { if (heads[i] && !td.hasAttribute('data-label')) td.setAttribute('data-label', heads[i]); });
-      });
+      var rows = t.querySelectorAll('tbody tr'), k = 0;
+      (function batch() {   /* 40 rows per idle slice: no long task on big data tables */
+        for (var e = Math.min(rows.length, k + 40); k < e; k++)
+          [].forEach.call(rows[k].children, function (td, i) { if (heads[i] && !td.hasAttribute('data-label')) td.setAttribute('data-label', heads[i]); });
+        if (k < rows.length) idle(batch, { timeout: 2000 });
+      })();
     });
   }
   document.querySelectorAll('.prose, .tool-page').forEach(function (r) {
-    labelTables(r);
+    idle(function () { labelTables(r); }, { timeout: 3000 });
     if (r.classList.contains('tool-page') && window.MutationObserver) {
       var pend = false;
       new MutationObserver(function () { if (pend) return; pend = true; requestAnimationFrame(function () { pend = false; labelTables(r); }); }).observe(r, { childList: true, subtree: true });
