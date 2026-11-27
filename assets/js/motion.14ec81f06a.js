@@ -161,6 +161,7 @@
   var lastY = window.scrollY;
   addEventListener('scroll', function () {
     var y = window.scrollY, d = y - lastY;
+    doc.classList.toggle('past-fold', y > innerHeight * 0.6);
     if (Math.abs(d) > 6 && nav && !document.body.classList.contains('menu-open')) { var hid = d > 0 && y > 400; nav.classList.toggle('hide', hid); doc.classList.toggle('nav-hidden', hid); }
     lastY = y;
   }, { passive: true });
@@ -173,6 +174,7 @@
     doc.classList.add('has-cursor');
     var fd = follower(dot, 0.5, moveTo), fr = follower(ring, 0.16, moveTo), ringLabel = ring.firstChild;
     addEventListener('pointermove', function (e) {
+      if (!doc.classList.contains('cur-on')) doc.classList.add('cur-on');
       fd(e.clientX, e.clientY); fr(e.clientX, e.clientY);
       var t = e.target.closest ? e.target.closest('a, button, summary, [data-cursor]') : null;
       var view = t && (t.matches('[data-cursor]') || t.querySelector('img, picture'));
@@ -183,6 +185,25 @@
     document.addEventListener('pointerleave', function () { doc.classList.add('cur-hide'); });
     document.addEventListener('pointerenter', function () { doc.classList.remove('cur-hide'); });
   }
+
+  /* ---------- tables: each cell carries its column name, so phones can show rows as cards ---------- */
+  function labelTables(root) {
+    root.querySelectorAll('table').forEach(function (t) {
+      var heads = [].map.call(t.querySelectorAll('thead th'), function (th) { return th.textContent.trim(); });
+      if (!heads.length) return;
+      t.classList.add('cards');
+      t.querySelectorAll('tbody tr').forEach(function (tr) {
+        [].forEach.call(tr.children, function (td, i) { if (heads[i] && !td.hasAttribute('data-label')) td.setAttribute('data-label', heads[i]); });
+      });
+    });
+  }
+  document.querySelectorAll('.prose, .tool-page').forEach(function (r) {
+    labelTables(r);
+    if (r.classList.contains('tool-page') && window.MutationObserver) {
+      var pend = false;
+      new MutationObserver(function () { if (pend) return; pend = true; requestAnimationFrame(function () { pend = false; labelTables(r); }); }).observe(r, { childList: true, subtree: true });
+    }
+  });
 
   /* ---------- back to top (after two screens) ---------- */
   var top = document.querySelector('.to-top');
@@ -512,8 +533,8 @@
     /* count-up (real numbers only, written in the HTML) */
     document.querySelectorAll('[data-count]').forEach(function (el) {
       var to = +el.dataset.count, from = +(el.dataset.from || 0), o = { v: from };
-      ScrollTrigger.create({ trigger: el, start: 'top 75%', once: true,
-        onEnter: function () { el.textContent = from; gsap.to(o, { v: to, duration: 0.6, ease: 'expo.out', onUpdate: function () { el.textContent = Math.round(o.v); } }); } });
+      ScrollTrigger.create({ trigger: el, start: 'top 97%', once: true,
+        onEnter: function () { el.textContent = from; gsap.to(o, { v: to, duration: 0.45, ease: 'expo.out', onUpdate: function () { el.textContent = Math.round(o.v); } }); } });
     });
     ScrollTrigger.refresh();
   }
