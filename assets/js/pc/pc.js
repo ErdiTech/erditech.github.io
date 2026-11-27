@@ -38,7 +38,7 @@ export async function mount(canvas, opts) {
   const depth = smoothstep(float(3200), float(900), positionView.z.negate());
   const glow = smoothstep(uBand.mul(10.0), 0.0, abs(positionLocal.z.sub(uScan)));   // soft halo around the laser line
   const lit = base.mul(2.05).add(vec3(0.05, 0.07, 0.11).mul(h));
-  const col = mix(base.mul(0.22), lit, measured).mul(float(0.42).add(depth.mul(0.95))).add(red.mul(band.mul(3.0))).add(red.mul(glow.mul(0.42)));
+  const col = mix(base.mul(0.3), lit, measured).mul(float(0.42).add(depth.mul(0.95))).add(red.mul(band.mul(3.0))).add(red.mul(glow.mul(0.42)));
   const mat = new THREE.PointsNodeMaterial({ transparent: false, depthWrite: true });
   // round footprint: points fade out towards the tile edge, so the square cut never shows
   const rad = positionLocal.xz.length();
@@ -88,7 +88,11 @@ export async function mount(canvas, opts) {
       camera.position.y = Math.max(camera.position.y, groundAt(camera.position.x, camera.position.z) + 320);   // never inside the slope
       camera.lookAt(target);
       // scan line sweeps from the north edge (z = -maxy) to the south edge over the first 82% of the scroll
-      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3) - 2200 * (1 - k);   // the scan line sweeps across the massif during the intro
+      // scan line: rests over the north 55% of the tile at the top of the page and finishes the sweep with the scroll;
+      // in the first 3.2 s after the cloud appears it sweeps in from the north edge, lighting the massif as it passes
+      const rest = -b[4] + (b[4] - b[1]) * (0.55 + 0.45 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3);
+      const ks = easeOut(Math.min(1, s / 3.2));
+      uScan.value = rest + (-b[4] - 150 - rest) * (1 - ks);
       renderer.render(scene, camera);
       if (opts.onReadout) {
         tmp.set(camera.position.x * 0.4, 0, uScan.value); tmp.y = groundAt(tmp.x, tmp.z);
