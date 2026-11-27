@@ -2,7 +2,7 @@
 // three.js r187 WebGPURenderer + TSL (falls back to its WebGL2 backend where WebGPU is missing).
 // mount(canvas, { url, onReadout }) -> { setProgress(p), dispose() }
 import * as THREE from '../three/three.webgpu.js';
-import { attribute, uniform, float, vec3, mix, smoothstep, abs, positionLocal, clamp, max } from '../three/three.tsl.js';
+import { attribute, uniform, float, vec3, mix, smoothstep, abs, positionLocal, positionView, clamp, max } from '../three/three.tsl.js';
 
 export async function mount(canvas, opts) {
   const data = await new Promise((resolve, reject) => {
@@ -35,7 +35,8 @@ export async function mount(canvas, opts) {
   const measured = smoothstep(uScan.add(1.0), uScan.sub(1.0), positionLocal.z);   // 1 behind the line
   const band = smoothstep(uBand, 0.0, abs(positionLocal.z.sub(uScan)));
   const red = vec3(1.0, 0.27, 0.2);
-  const col = mix(base.mul(0.2), base.mul(1.3).add(vec3(0.05, 0.03, 0.02)), measured).add(red.mul(band.mul(2.2)));
+  const depth = smoothstep(float(3200), float(900), positionView.z.negate());
+  const col = mix(base.mul(0.32), base.mul(1.7).add(vec3(0.06, 0.04, 0.03)), measured).mul(float(0.55).add(depth.mul(0.75))).add(red.mul(band.mul(2.6)));
   const mat = new THREE.PointsNodeMaterial({ transparent: false, depthWrite: true });
   // round footprint: points fade out towards the tile edge, so the square cut never shows
   const rad = positionLocal.xz.length();
@@ -76,14 +77,14 @@ export async function mount(canvas, opts) {
       const t = Math.min(1, Math.max(0, p)), s = (performance.now() - t0) / 1000;
       pose(t, camera.position, target);
       // intro (first 2.8 s after the cloud appears): the camera glides in from further out
-      const k = easeOut(Math.min(1, s / 2.8));
-      camera.position.multiplyScalar(1 + 0.32 * (1 - k));
+      const k = ease(Math.min(1, s / 4.5));
+      camera.position.multiplyScalar(1 + 0.6 * (1 - k));
       camera.position.applyAxisAngle(UP, THREE.MathUtils.degToRad(3.5 * Math.sin(s * 0.32)));
       camera.position.y += 18 * Math.sin(s * 0.5);
       camera.position.y = Math.max(camera.position.y, groundAt(camera.position.x, camera.position.z) + 320);   // never inside the slope
       camera.lookAt(target);
       // scan line sweeps from the north edge (z = -maxy) to the south edge over the first 82% of the scroll
-      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3) - 900 * (1 - k);   // the scan line sweeps in during the intro
+      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3) - 1500 * (1 - k);   // the scan line sweeps in during the intro
       renderer.render(scene, camera);
       if (opts.onReadout) {
         tmp.set(camera.position.x * 0.4, 0, uScan.value); tmp.y = groundAt(tmp.x, tmp.z);
