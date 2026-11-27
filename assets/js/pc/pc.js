@@ -27,7 +27,7 @@ export async function mount(canvas, opts) {
 
   // colour: elevation ramp (deep blue valley -> pale ice ridges), lit by intensity; points behind the scan line are
   // "measured" (full brightness), ahead of it they stay dim; a thin red band marks the laser line itself.
-  const uScan = uniform(-1e5), uBand = uniform(14.0);
+  const uScan = uniform(-1e5), uBand = uniform(16.0);
   const h = clamp(positionLocal.y.div(H), 0, 1);
   const inten = attribute('inten', 'float');
   const low = vec3(0.05, 0.16, 0.32), high = vec3(0.78, 0.9, 1.0);
@@ -36,7 +36,9 @@ export async function mount(canvas, opts) {
   const band = smoothstep(uBand, 0.0, abs(positionLocal.z.sub(uScan)));
   const red = vec3(1.0, 0.27, 0.2);
   const depth = smoothstep(float(3200), float(900), positionView.z.negate());
-  const col = mix(base.mul(0.32), base.mul(1.7).add(vec3(0.06, 0.04, 0.03)), measured).mul(float(0.55).add(depth.mul(0.75))).add(red.mul(band.mul(2.6)));
+  const glow = smoothstep(uBand.mul(10.0), 0.0, abs(positionLocal.z.sub(uScan)));   // soft halo around the laser line
+  const lit = base.mul(2.05).add(vec3(0.05, 0.07, 0.11).mul(h));
+  const col = mix(base.mul(0.22), lit, measured).mul(float(0.42).add(depth.mul(0.95))).add(red.mul(band.mul(3.0))).add(red.mul(glow.mul(0.42)));
   const mat = new THREE.PointsNodeMaterial({ transparent: false, depthWrite: true });
   // round footprint: points fade out towards the tile edge, so the square cut never shows
   const rad = positionLocal.xz.length();
@@ -66,7 +68,8 @@ export async function mount(canvas, opts) {
     renderer.setSize(w, hh, false); camera.aspect = w / hh; camera.fov = w < hh ? 66 : 42; camera.filmOffset = w < hh ? 1.5 : (opts.offset != null ? opts.offset : -6); camera.updateProjectionMatrix(); dirty = true;
   }
   let p = 0, dirty = true, visible = true;
-  const t0 = performance.now();
+  const now = () => (window.__pcNow ? window.__pcNow() : performance.now());
+  let t0 = null;
   const easeOut = (v) => 1 - Math.pow(1 - v, 3);
   if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(canvas);
   size(); addEventListener('resize', size);
@@ -74,17 +77,18 @@ export async function mount(canvas, opts) {
   function frame() {
     if (dirty || visible) {
       dirty = false;
-      const t = Math.min(1, Math.max(0, p)), s = (performance.now() - t0) / 1000;
+      if (t0 === null) t0 = now();
+      const t = Math.min(1, Math.max(0, p)), s = (now() - t0) / 1000;
       pose(t, camera.position, target);
       // intro (first 2.8 s after the cloud appears): the camera glides in from further out
-      const k = ease(Math.min(1, s / 4.5));
-      camera.position.multiplyScalar(1 + 0.6 * (1 - k));
-      camera.position.applyAxisAngle(UP, THREE.MathUtils.degToRad(3.5 * Math.sin(s * 0.32)));
+      const k = ease(Math.min(1, s / 5));
+      camera.position.multiplyScalar(1 + 0.75 * (1 - k));
+      camera.position.applyAxisAngle(UP, THREE.MathUtils.degToRad(-26 * (1 - k) + 6 * Math.sin(s * 0.22)));
       camera.position.y += 18 * Math.sin(s * 0.5);
       camera.position.y = Math.max(camera.position.y, groundAt(camera.position.x, camera.position.z) + 320);   // never inside the slope
       camera.lookAt(target);
       // scan line sweeps from the north edge (z = -maxy) to the south edge over the first 82% of the scroll
-      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3) - 1500 * (1 - k);   // the scan line sweeps in during the intro
+      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3) - 2200 * (1 - k);   // the scan line sweeps across the massif during the intro
       renderer.render(scene, camera);
       if (opts.onReadout) {
         tmp.set(camera.position.x * 0.4, 0, uScan.value); tmp.y = groundAt(tmp.x, tmp.z);
