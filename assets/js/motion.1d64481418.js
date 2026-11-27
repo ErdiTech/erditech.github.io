@@ -291,14 +291,14 @@
   });
 
   /* ---------- wide tables: fade hint on the right until scrolled to the end ---------- */
-  document.querySelectorAll('.tbl').forEach(function (t) {
+  document.querySelectorAll('.tbl, .tool-page .tablewrap').forEach(function (t) {
     var chk = function () { t.classList.toggle('end', t.scrollLeft + t.clientWidth >= t.scrollWidth - 4); };
     t.addEventListener('scroll', chk, { passive: true }); chk();
   });
 
   /* ---------- images: blurred placeholder until decoded ---------- */
   document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
-    if (img.complete && img.naturalWidth) return;
+    if ((img.complete && img.naturalWidth) || /logo/.test(img.src)) return;
     img.classList.add('lq');
     img.addEventListener('load', function () { img.classList.add('ok'); }, { once: true });
     img.addEventListener('error', function () { img.classList.add('ok'); }, { once: true });
@@ -512,8 +512,8 @@
     /* count-up (real numbers only, written in the HTML) */
     document.querySelectorAll('[data-count]').forEach(function (el) {
       var to = +el.dataset.count, from = +(el.dataset.from || 0), o = { v: from };
-      ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
-        onEnter: function () { el.textContent = from; gsap.to(o, { v: to, duration: 0.9, ease: 'expo.out', onUpdate: function () { el.textContent = Math.round(o.v); } }); } });
+      ScrollTrigger.create({ trigger: el, start: 'top 75%', once: true,
+        onEnter: function () { el.textContent = from; gsap.to(o, { v: to, duration: 0.6, ease: 'expo.out', onUpdate: function () { el.textContent = Math.round(o.v); } }); } });
     });
     ScrollTrigger.refresh();
   }
