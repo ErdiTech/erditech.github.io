@@ -163,9 +163,15 @@
   addEventListener('scroll', function () {
     var y = window.scrollY, d = y - lastY;
     doc.classList.toggle('past-fold', y > innerHeight * 0.6);
-    if (Math.abs(d) > 6 && nav && !document.body.classList.contains('menu-open')) { var hid = d > 0 && y > 400; nav.classList.toggle('hide', hid); doc.classList.toggle('nav-hidden', hid); }
+    if (Math.abs(d) > 6 && nav && !document.body.classList.contains('menu-open')) { var hid = false; nav.classList.toggle('hide', hid); doc.classList.toggle('nav-hidden', hid); }
     lastY = y;
   }, { passive: true });
+
+  /* ---------- hold hero headlines until the webfonts are in (max 900 ms): no fallback-font flash ---------- */
+  if (document.fonts && document.fonts.ready) {
+    var fr = function () { doc.classList.add('fonts-in'); };
+    document.fonts.ready.then(fr); setTimeout(fr, 900);
+  } else doc.classList.add('fonts-in');
 
   /* ---------- custom cursor: dot + ring; grows on links, "View" on images ---------- */
   if (!coarse && matchMedia('(pointer: fine)').matches) {
@@ -498,7 +504,7 @@
     document.querySelectorAll('[data-lightup]').forEach(function (p) {
       SplitText.create(p, { type: 'words', autoSplit: true, aria: 'auto',
         onSplit: function (self) {
-          return gsap.fromTo(self.words, { opacity: 0.16 }, { opacity: 1, stagger: 0.1, ease: 'none',
+          return gsap.fromTo(self.words, { opacity: small ? 0.5 : 0.16 }, { opacity: 1, stagger: 0.1, ease: 'none',
             scrollTrigger: { trigger: p, start: 'top 80%', end: 'bottom 40%', scrub: true } });
         } });
     });
