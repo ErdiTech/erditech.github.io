@@ -85,7 +85,8 @@
 
   /* ---------- Lenis smooth scroll (desktop pointers) ---------- */
   var lenis = null;
-  if (window.Lenis && !coarse) {
+  /* ?nolenis=1 turns smooth scrolling off (QA screenshots, debugging) */
+  if (window.Lenis && !coarse && !/[?&]nolenis=1/.test(location.search)) {
     lenis = new Lenis({ duration: 1.3, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); }, smoothWheel: true, wheelMultiplier: 0.9, autoRaf: true });
     window.__lenis = lenis;
     document.querySelectorAll('a[href*="#"]').forEach(function (a) {
@@ -511,6 +512,9 @@
       var skewTo = gsap.quickTo(track.children, 'skewX', { duration: 0.5, ease: 'power3.out' });
       gsap.to(track, { x: function () { return -dist(); }, ease: 'none',
         scrollTrigger: { trigger: hs, start: 'top 12%', end: function () { return '+=' + dist(); }, pin: true, scrub: 0.6, invalidateOnRefresh: true,
+          /* scroll snap: the track settles on a card edge when the wheel stops */
+          snap: { snapTo: function (v) { var d = dist() || 1, pts = [].map.call(track.children, function (c) { return Math.min(1, c.offsetLeft / d); }); pts.push(1); return gsap.utils.snap(pts, v); },
+                  duration: { min: 0.25, max: 0.7 }, delay: 0.12, ease: 'power2.inOut' },
           onUpdate: function (st) { skewTo(gsap.utils.clamp(-8, 8, st.getVelocity() / -260)); } } });
     }
 
