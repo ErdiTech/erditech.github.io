@@ -157,6 +157,179 @@
     addEventListener('pageshow', function () { curtain.classList.remove('on'); });
   }
 
+  /* ---------- nav hides on scroll down, returns on scroll up ---------- */
+  var lastY = window.scrollY;
+  addEventListener('scroll', function () {
+    var y = window.scrollY, d = y - lastY;
+    if (Math.abs(d) > 6 && nav && !document.body.classList.contains('menu-open')) nav.classList.toggle('hide', d > 0 && y > 400);
+    lastY = y;
+  }, { passive: true });
+
+  /* ---------- custom cursor: dot + ring; grows on links, "View" on images ---------- */
+  if (!coarse && matchMedia('(pointer: fine)').matches) {
+    var dot = document.createElement('div'), ring = document.createElement('div');
+    dot.className = 'cur-dot'; ring.className = 'cur-ring'; ring.innerHTML = '<span>View</span>';
+    document.body.appendChild(dot); document.body.appendChild(ring);
+    doc.classList.add('has-cursor');
+    var fd = follower(dot, 0.5, moveTo), fr = follower(ring, 0.16, moveTo), ringLabel = ring.firstChild;
+    addEventListener('pointermove', function (e) {
+      fd(e.clientX, e.clientY); fr(e.clientX, e.clientY);
+      var t = e.target.closest ? e.target.closest('a, button, summary, [data-cursor]') : null;
+      var view = t && (t.matches('[data-cursor]') || t.querySelector('img, picture'));
+      ringLabel.textContent = (t && t.getAttribute('data-cursor')) || 'View';
+      doc.classList.toggle('cur-view', !!view);
+      doc.classList.toggle('cur-link', !!t && !view);
+    }, { passive: true });
+    document.addEventListener('pointerleave', function () { doc.classList.add('cur-hide'); });
+    document.addEventListener('pointerenter', function () { doc.classList.remove('cur-hide'); });
+  }
+
+  /* ---------- back to top (after two screens) ---------- */
+  var top = document.querySelector('.to-top');
+  if (top) {
+    addEventListener('scroll', function () { top.classList.toggle('show', window.scrollY > innerHeight * 2); }, { passive: true });
+    top.addEventListener('click', function () { lenis ? lenis.scrollTo(0, { duration: 1.6 }) : scrollTo({ top: 0, behavior: 'smooth' }); });
+  }
+
+  /* ---------- character reveal for the big footer mark ---------- */
+  document.querySelectorAll('.foot-mark').forEach(function (m) {
+    var i = 0;
+    m.querySelectorAll('*').forEach(function () {});
+    var walker = document.createTreeWalker(m, NodeFilter.SHOW_TEXT), nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function (node) {
+      var frag = document.createDocumentFragment();
+      node.textContent.split('').forEach(function (c) {
+        if (c === ' ') { frag.appendChild(document.createTextNode(' ')); return; }
+        var s = document.createElement('span'); s.className = 'ch'; s.style.setProperty('--i', i++); s.textContent = c; frag.appendChild(s);
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { m.classList.add('in'); io.disconnect(); } }, { threshold: 0.3 }).observe(m);
+    else m.classList.add('in');
+  });
+
+  /* ---------- scrambled decode for small labels (on view) and nav links (on hover) ---------- */
+  var GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>#*';
+  function scramble(el) {
+    if (el.__busy) return;
+    var final = el.__text || (el.__text = el.textContent), len = final.length, f = 0, total = Math.min(26, 10 + len);
+    el.__busy = true;
+    (function step() {
+      var out = '';
+      for (var i = 0; i < len; i++) {
+        var c = final[i];
+        out += (c === ' ' || i < (f / total) * len) ? c : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      }
+      el.textContent = out;
+      if (++f <= total) requestAnimationFrame(step); else { el.textContent = final; el.__busy = false; }
+    })();
+  }
+  var scrambleEls = [].slice.call(document.querySelectorAll('.kick, .film .caps, .badge, .phero .crumbs span:last-child')).filter(function (el) { return el.children.length === 0; });
+  if ('IntersectionObserver' in window) {
+    var sio = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { scramble(en.target); sio.unobserve(en.target); } }); }, { threshold: 1 });
+    scrambleEls.forEach(function (el) { sio.observe(el); });
+  }
+  document.querySelectorAll('.nav-links a').forEach(function (a) { a.addEventListener('pointerenter', function () { if (!a.children.length) scramble(a); }); });
+
+  /* ---------- typewriter with a keyboard that presses along ---------- */
+  document.querySelectorAll('[data-type]').forEach(function (term) {
+    var line = term.querySelector('.line'), keys = term.querySelectorAll('.keys kbd'), text = term.getAttribute('data-type');
+    var map = {};
+    keys.forEach(function (k) { map[(k.getAttribute('data-k') || k.textContent).toLowerCase()] = k; });
+    function press(c) {
+      var k = map[c.toLowerCase()] || (c === ' ' ? map.space : null) || map.any;
+      if (!k) return;
+      if (k === map.any) k.textContent = c;
+      k.classList.add('down'); setTimeout(function () { k.classList.remove('down'); }, 110);
+    }
+    function run() {
+      var i = 0; line.innerHTML = '<b>$</b> <span></span><i class="caret"></i>';
+      var out = line.querySelector('span');
+      (function tick() {
+        if (i >= text.length) { setTimeout(function () { if (map.enter) { map.enter.classList.add('down'); setTimeout(function () { map.enter.classList.remove('down'); }, 160); } }, 300); return; }
+        var c = text[i++]; out.textContent += c; press(c);
+        setTimeout(tick, c === ' ' ? 140 : 55 + Math.random() * 70);
+      })();
+    }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { run(); io.disconnect(); } }, { threshold: 0.6 }).observe(term);
+  });
+
+  /* ---------- copy buttons + toast ---------- */
+  var toast = null;
+  function say(msg) {
+    if (!toast) { toast = document.createElement('div'); toast.className = 'toast'; toast.setAttribute('role', 'status'); document.body.appendChild(toast); }
+    toast.textContent = msg; toast.classList.add('show');
+    clearTimeout(toast.__t); toast.__t = setTimeout(function () { toast.classList.remove('show'); }, 1800);
+  }
+  document.querySelectorAll('[data-copy]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var txt = b.getAttribute('data-copy'), lbl = b.querySelector('span');
+      (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () {
+        b.classList.add('ok'); if (lbl) lbl.textContent = 'Copied ✓'; say('Copied: ' + txt);
+        setTimeout(function () { b.classList.remove('ok'); if (lbl) lbl.textContent = 'Copy'; }, 1600);
+      }).catch(function () { say(txt); });
+    });
+  });
+
+  /* ---------- images: blurred placeholder until decoded ---------- */
+  document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
+    if (img.complete && img.naturalWidth) return;
+    img.classList.add('lq');
+    img.addEventListener('load', function () { img.classList.add('ok'); }, { once: true });
+    img.addEventListener('error', function () { img.classList.add('ok'); }, { once: true });
+  });
+
+  /* ---------- marquee speeds up with scroll velocity and flips with direction ---------- */
+  var tracks = [].slice.call(document.querySelectorAll('.marquee-track'));
+  if (tracks.length && tracks[0].getAnimations) {
+    var my = window.scrollY, vel = 0, dir = 1, mRun = false;
+    addEventListener('scroll', function () { var y = window.scrollY; vel = y - my; if (vel) dir = vel > 0 ? 1 : -1; my = y; if (!mRun) { mRun = true; requestAnimationFrame(mTick); } }, { passive: true });
+    var mTick = function () {
+      var rate = dir * (1 + Math.min(6, Math.abs(vel) / 12));
+      tracks.forEach(function (t) { t.getAnimations().forEach(function (a) { a.playbackRate += (rate - a.playbackRate) * 0.12; }); });
+      vel *= 0.9;
+      if (Math.abs(vel) > 0.2 || tracks.some(function (t) { return t.getAnimations().some(function (a) { return Math.abs(a.playbackRate - dir) > 0.02; }); })) requestAnimationFrame(mTick); else mRun = false;
+    };
+  }
+
+  /* ---------- live echo under search inputs (characters bounce as you type) ---------- */
+  document.querySelectorAll('form.f input[type="text"], form.f input:not([type]), form.f input[type="number"]').forEach(function (inp) {
+    var echo = document.createElement('span'); echo.className = 'echo'; echo.setAttribute('aria-hidden', 'true');
+    inp.insertAdjacentElement('afterend', echo);
+    var prev = '';
+    inp.addEventListener('input', function () {
+      var v = inp.value;
+      if (v.length > prev.length && v.indexOf(prev) === 0) { var s = document.createElement('span'); s.textContent = v.slice(prev.length); echo.appendChild(s); }
+      else { echo.textContent = ''; v.split('').forEach(function (c) { var s = document.createElement('span'); s.textContent = c; s.style.animation = 'none'; echo.appendChild(s); }); }
+      prev = v;
+    });
+  });
+
+  /* ---------- button feedback: tick when an action succeeds, shake when input is missing ---------- */
+  document.querySelectorAll('[data-feedback]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var need = b.getAttribute('data-needs'), field = need && document.getElementById(need);
+      if (field && !field.value.trim()) { field.classList.remove('shake'); void field.offsetWidth; field.classList.add('shake'); return; }
+      var old = b.textContent; b.classList.add('done'); b.textContent = '✓ ' + old;
+      setTimeout(function () { b.classList.remove('done'); b.textContent = old; }, 1200);
+    });
+  });
+
+  /* ---------- 404: point the laser ---------- */
+  var l404 = document.querySelector('.laser-404');
+  if (l404) {
+    var host = l404.parentElement, ln = l404.querySelector('line'), pt = l404.querySelector('circle'), tx = l404.querySelector('text');
+    var aim = function (x, y) {
+      var r = host.getBoundingClientRect(), ox = r.width, oy = r.height;
+      ln.setAttribute('x1', ox); ln.setAttribute('y1', oy); ln.setAttribute('x2', x); ln.setAttribute('y2', y);
+      pt.setAttribute('cx', x); pt.setAttribute('cy', y);
+      tx.setAttribute('x', x + 14); tx.setAttribute('y', y - 12); tx.textContent = 'no target';
+    };
+    var hr = host.getBoundingClientRect(); aim(hr.width * 0.62, hr.height * 0.34);
+    host.addEventListener('pointermove', function (e) { var r = host.getBoundingClientRect(); aim(e.clientX - r.left, e.clientY - r.top); });
+  }
+
   /* ---------- GSAP part, only where needed ---------- */
   var needs = document.querySelector('.film, [data-split], [data-lightup], [data-count], .pcard');
   if (!needs) return;
@@ -281,6 +454,18 @@
         } });
     });
 
+    /* module cards: pinned horizontal track on desktop; cards skew with scroll velocity */
+    var hs = document.querySelector('.hscroll');
+    if (hs && !small && matchMedia('(min-width: 961px)').matches) {
+      hs.classList.add('pinned');
+      var track = hs.querySelector('.bento');
+      var dist = function () { return Math.max(0, track.scrollWidth - hs.querySelector('.wrap').clientWidth + 80); };
+      var skewTo = gsap.quickTo(track.children, 'skewX', { duration: 0.5, ease: 'power3.out' });
+      gsap.to(track, { x: function () { return -dist(); }, ease: 'none',
+        scrollTrigger: { trigger: hs, start: 'top 12%', end: function () { return '+=' + dist(); }, pin: true, scrub: 0.6, invalidateOnRefresh: true,
+          onUpdate: function (st) { skewTo(gsap.utils.clamp(-8, 8, st.getVelocity() / -260)); } } });
+    }
+
     /* module cards: rise in a fan, tilt on hover */
     var cards = gsap.utils.toArray('.pcard');
     if (cards.length) {
@@ -292,7 +477,7 @@
         var rx = gsap.quickTo(c, 'rotationX', { duration: 0.6, ease: 'power3.out' }), ry = gsap.quickTo(c, 'rotationY', { duration: 0.6, ease: 'power3.out' });
         c.addEventListener('pointermove', function (e) {
           var r = c.getBoundingClientRect(), px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
-          ry(px * 8); rx(-py * 8);
+          ry(px * 6); rx(-py * 6);
           c.style.setProperty('--mx', ((px + 0.5) * 100).toFixed(1) + '%'); c.style.setProperty('--my', ((py + 0.5) * 100).toFixed(1) + '%');
           if (img) gsap.to(img, { x: px * 18, y: py * 14, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
         });
