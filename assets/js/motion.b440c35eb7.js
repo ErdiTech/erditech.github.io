@@ -161,7 +161,7 @@
   var lastY = window.scrollY;
   addEventListener('scroll', function () {
     var y = window.scrollY, d = y - lastY;
-    if (Math.abs(d) > 6 && nav && !document.body.classList.contains('menu-open')) nav.classList.toggle('hide', d > 0 && y > 400);
+    if (Math.abs(d) > 6 && nav && !document.body.classList.contains('menu-open')) { var hid = d > 0 && y > 400; nav.classList.toggle('hide', hid); doc.classList.toggle('nav-hidden', hid); }
     lastY = y;
   }, { passive: true });
 
@@ -270,6 +270,30 @@
         setTimeout(function () { b.classList.remove('ok'); if (lbl) lbl.textContent = 'Copy'; }, 1600);
       }).catch(function () { say(txt); });
     });
+  });
+
+  /* ---------- lazy videos: sources attach one screen before view, play only while visible ---------- */
+  document.querySelectorAll('video[data-lazy-video]').forEach(function (v) {
+    if (lite || !('IntersectionObserver' in window)) return;
+    var armed = false;
+    new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (en.isIntersecting && !armed) {
+          armed = true;
+          v.querySelectorAll('source[data-src]').forEach(function (s) { s.src = s.getAttribute('data-src'); });
+          v.load();
+        }
+      });
+    }, { rootMargin: '100% 0px' }).observe(v);
+    new IntersectionObserver(function (es) {
+      es.forEach(function (en) { if (en.isIntersecting && armed) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } else v.pause(); });
+    }, { threshold: 0.15 }).observe(v);
+  });
+
+  /* ---------- wide tables: fade hint on the right until scrolled to the end ---------- */
+  document.querySelectorAll('.tbl').forEach(function (t) {
+    var chk = function () { t.classList.toggle('end', t.scrollLeft + t.clientWidth >= t.scrollWidth - 4); };
+    t.addEventListener('scroll', chk, { passive: true }); chk();
   });
 
   /* ---------- images: blurred placeholder until decoded ---------- */
@@ -406,7 +430,7 @@
       new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { start(); io.disconnect(); } }, { rootMargin: '100% 0px' }).observe(sec);
       function setLayers(p) {
         layers.forEach(function (el) {
-          var a = +el.dataset.in, b = +el.dataset.out, f = 0.07, o = 0;
+          var a = +el.dataset.in, b = +el.dataset.out, f = 0.05, o = 0;
           if (p >= a && p <= b) o = Math.min(1, (p - a) / f, (b - p) / f);
           if (a === 0 && p < f) o = 1;
           if (b >= 1 && p > b - f) o = 1;
@@ -488,8 +512,8 @@
     /* count-up (real numbers only, written in the HTML) */
     document.querySelectorAll('[data-count]').forEach(function (el) {
       var to = +el.dataset.count, from = +(el.dataset.from || 0), o = { v: from };
-      ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true,
-        onEnter: function () { el.textContent = from; gsap.to(o, { v: to, duration: 1.8, ease: 'expo.out', onUpdate: function () { el.textContent = Math.round(o.v); } }); } });
+      ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+        onEnter: function () { el.textContent = from; gsap.to(o, { v: to, duration: 0.9, ease: 'expo.out', onUpdate: function () { el.textContent = Math.round(o.v); } }); } });
     });
     ScrollTrigger.refresh();
   }
