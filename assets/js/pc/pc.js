@@ -66,6 +66,7 @@ export async function mount(canvas, opts) {
   }
   let p = 0, dirty = true, visible = true;
   const t0 = performance.now();
+  const easeOut = (v) => 1 - Math.pow(1 - v, 3);
   if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(canvas);
   size(); addEventListener('resize', size);
 
@@ -74,12 +75,15 @@ export async function mount(canvas, opts) {
       dirty = false;
       const t = Math.min(1, Math.max(0, p)), s = (performance.now() - t0) / 1000;
       pose(t, camera.position, target);
+      // intro (first 2.8 s after the cloud appears): the camera glides in from further out
+      const k = easeOut(Math.min(1, s / 2.8));
+      camera.position.multiplyScalar(1 + 0.32 * (1 - k));
       camera.position.applyAxisAngle(UP, THREE.MathUtils.degToRad(3.5 * Math.sin(s * 0.32)));
       camera.position.y += 18 * Math.sin(s * 0.5);
       camera.position.y = Math.max(camera.position.y, groundAt(camera.position.x, camera.position.z) + 320);   // never inside the slope
       camera.lookAt(target);
       // scan line sweeps from the north edge (z = -maxy) to the south edge over the first 82% of the scroll
-      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3);
+      uScan.value = -b[4] + (b[4] - b[1]) * (0.3 + 0.7 * Math.min(1, t / 0.85)) + 70 * Math.sin(s * 1.3) - 900 * (1 - k);   // the scan line sweeps in during the intro
       renderer.render(scene, camera);
       if (opts.onReadout) {
         tmp.set(camera.position.x * 0.4, 0, uScan.value); tmp.y = groundAt(tmp.x, tmp.z);
