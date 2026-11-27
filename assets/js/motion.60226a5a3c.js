@@ -216,7 +216,8 @@
   });
 
   /* tables that fit their column may let the header stick to the page (CSS: .fits) */
-  if (matchMedia('(min-width: 1400px)').matches) {
+  var markFits = function () {
+    if (!matchMedia('(min-width: 1400px)').matches) return;
     var fits = function (t) { return t.scrollWidth <= t.clientWidth + 1; };
     document.querySelectorAll('.prose .tbl').forEach(function (t) {
       if (!fits(t)) return;
@@ -224,7 +225,9 @@
       var w = t.closest('.wrap');
       if (w && [].every.call(w.querySelectorAll('.tbl'), fits) && w.scrollWidth <= w.clientWidth + 1) w.classList.add('fits');
     });
-  }
+  };
+  /* measured once the webfonts are in, so the widths are final */
+  addEventListener('load', function () { (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(markFits); });
 
   /* looping decorations (marquee, mesh, caret, live dot, scroll cue) run only while on screen: no idle repaints */
   if ('IntersectionObserver' in window) {
