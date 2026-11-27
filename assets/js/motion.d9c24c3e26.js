@@ -235,6 +235,27 @@
     document.querySelectorAll('.marquee, .contact-wrap, .term, .film-stage, .stream').forEach(function (el) { loopIO.observe(el); });
   }
 
+  /* ---------- transit decoder panel: each scroll third decodes the next example capture ---------- */
+  var tp = document.querySelector('.t2-panel');
+  if (tp) {
+    var tpSec = tp.closest('.transit2'), tpRows = tp.querySelectorAll('[data-tp]'), tpRead = tp.querySelector('[data-tp-read]'),
+        tpNote = tp.querySelector('[data-tp-note]'), tpBaud = tp.querySelector('[data-tp-baud]'), tpCur = -1;
+    var TP = [['43.54 m', 'ERDI H series · 0x1102 = 4354 cm · checksum ok', '460800 8N1'],
+              ['4.20 m', 'ERDI LR / LRF-A1 · 0x002A = 42 dm · checksum ok', '115200 8N1'],
+              ['1.22 m', 'Benewake 9-byte · 0x007A = 122 cm · checksum ok', '115200 8N1']];
+    var tpSet = function (i) {
+      if (i === tpCur) return; tpCur = i;
+      [].forEach.call(tpRows, function (r, k) { r.classList.toggle('on', k === i); });
+      tpRead.textContent = TP[i][0]; tpNote.textContent = TP[i][1]; tpBaud.textContent = TP[i][2];
+    };
+    var tpUpd = function () {
+      var r = tpSec.getBoundingClientRect(), span = Math.max(1, r.height - innerHeight);
+      var p = Math.min(0.999, Math.max(0, -r.top / span));
+      tpSet(Math.min(2, Math.floor(p * 3)));
+    };
+    tpSet(0); addEventListener('scroll', tpUpd, { passive: true }); tpUpd();
+  }
+
   /* ---------- back to top (after two screens) ---------- */
   var top = document.querySelector('.to-top');
   if (top) {
