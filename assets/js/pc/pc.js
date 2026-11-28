@@ -86,9 +86,11 @@ export async function mount(canvas, opts) {
   if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(canvas);
   size(); addEventListener('resize', size);
 
+  let lastKey = NaN;
   function frame() {
-    if (dirty || visible) {
-      dirty = false;
+    const key = p * 1e7 + now();   // same progress and same clock: nothing to draw (idle pages and frame-stepped recording)
+    if (dirty || (visible && key !== lastKey)) {
+      dirty = false; lastKey = key;
       if (t0 === null) t0 = now();
       const t = Math.min(1, Math.max(0, p)), s = (now() - t0) / 1000;
       const th = Math.min(1, t / heroEnd), tu = t > heroEnd ? (t - heroEnd) / (1 - heroEnd) : 0;
