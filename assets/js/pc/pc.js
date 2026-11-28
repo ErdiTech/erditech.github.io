@@ -58,8 +58,8 @@ export async function mount(canvas, opts) {
     outLook.set(40 * e, 470 - 140 * e, 120 * e);
   }
   // after the hero: keyframed tour (skim low over the ridge, swing round, top-down map view, pull back wide)
-  const K = [[0, -44, 1570, 1060, 40, 330, 120], [0.3, -5, 1100, 700, 0, 400, 0], [0.55, 40, 1300, 900, -60, 420, -40],
-             [0.8, 90, 800, 1700, 0, 330, 0], [1, 130, 1900, 1250, 0, 380, 0]];   // ~175 degrees over the page: smooth, no jumps
+  const K = [[0, -44, 1570, 1060, 40, 330, 120], [0.24, 0, 780, 470, 0, 400, 0], [0.5, 45, 1150, 860, -60, 420, -40],
+             [0.78, 92, 620, 1950, 0, 320, 0], [1, 132, 1950, 1250, 0, 380, 0]];   // skim the ridge, swing round, map view, pull back
   function tourPose(u, outPos, outLook) {
     let i = 0; while (i < K.length - 2 && u > K[i + 1][0]) i++;
     const A = K[i], B = K[i + 1], f = ease(Math.min(1, Math.max(0, (u - A[0]) / (B[0] - A[0]))));
