@@ -3,7 +3,7 @@
 // mount(canvas, { url, onReadout, tour, heroEnd }) -> { setProgress(p), dispose() }
 // tour: progress covers the whole page; the hero orbit runs until heroEnd, then the camera keeps touring the massif
 import * as THREE from '../three/three.webgpu.js';
-import { attribute, uniform, float, vec3, mix, smoothstep, abs, positionLocal, positionView, clamp, max } from '../three/three.tsl.js';
+import { attribute, uniform, float, vec2, vec3, vec4, mix, smoothstep, abs, positionLocal, positionView, clamp, max, fract, sin, dot, length, cameraProjectionMatrix, modelViewMatrix } from '../three/three.tsl.js';
 
 export async function mount(canvas, opts) {
   const data = await new Promise((resolve, reject) => {
@@ -46,6 +46,24 @@ export async function mount(canvas, opts) {
   const rad = positionLocal.xz.length();
   const edge = smoothstep(float(Math.min(b[3] - b[0], b[4] - b[1]) * 0.5), float(Math.min(b[3] - b[0], b[4] - b[1]) * 0.42), rad);
   mat.colorNode = max(col.mul(edge), vec3(0.0));
+  // cursor sweep (11-29): the pointer leaves a short trail of "disturbances" in screen space; points under each one are
+  // thrown outward (random direction from a position hash, scaled by view depth) and fall back as its amplitude decays
+  const TR = 6, uTrail = [], uAsp = uniform(1.0), uRad = uniform(opts.sweepRadius || 0.24);
+  for (let i = 0; i < TR; i++) uTrail.push(uniform(new THREE.Vector3(9, 9, 0)));   // x, y in NDC, z = amplitude
+  {
+    const clip = cameraProjectionMatrix.mul(modelViewMatrix).mul(vec4(positionLocal, 1.0));
+    const ndc = clip.xy.div(clip.w);
+    const hx = fract(sin(dot(positionLocal.xz, vec2(12.9898, 78.233))).mul(43758.5453));
+    const hy = fract(sin(dot(positionLocal.zx.add(vec2(3.1, 7.7)), vec2(39.346, 11.135))).mul(24634.6345));
+    const hz = fract(sin(dot(positionLocal.xy, vec2(26.51, 63.7))).mul(31415.9265));
+    const dir = vec3(hx.mul(2.0).sub(1.0), hy.mul(0.9).add(0.15), hz.mul(2.0).sub(1.0));
+    let push = float(0.0);
+    for (let i = 0; i < TR; i++) {
+      const d = ndc.sub(uTrail[i].xy), dd = length(vec2(d.x.mul(uAsp), d.y));
+      push = push.add(smoothstep(uRad, float(0.0), dd).mul(uTrail[i].z));
+    }
+    mat.positionNode = positionLocal.add(dir.mul(push.mul(clip.w).mul(0.11)));
+  }
   const pts = new THREE.Points(geo, mat);
   scene.add(pts);
 
@@ -77,7 +95,7 @@ export async function mount(canvas, opts) {
 
   function size() {
     const w = canvas.clientWidth, hh = canvas.clientHeight;
-    renderer.setSize(w, hh, false); camera.aspect = w / hh; camera.fov = w < hh ? 66 : 42; camera.filmOffset = w < hh ? 1.5 : (opts.offset != null ? opts.offset : -6); camera.updateProjectionMatrix(); dirty = true;
+    renderer.setSize(w, hh, false); camera.aspect = w / hh; camera.fov = w < hh ? 66 : 42; camera.filmOffset = w < hh ? 1.5 : (opts.offset != null ? opts.offset : -6); camera.updateProjectionMatrix(); uAsp.value = w / hh; dirty = true;
   }
   let p = 0, dirty = true, visible = true;
   const now = () => (window.__pcNow ? window.__pcNow() : performance.now());
@@ -86,6 +104,30 @@ export async function mount(canvas, opts) {
   if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(canvas);
   size(); addEventListener('resize', size);
 
+  // trail slots: each holds {x, y, a0, t}; amplitude eases out with a small overshoot so the points "settle" back
+  const slots = []; for (let i = 0; i < TR; i++) slots.push({ a0: 0, t: 0 });
+  let slotI = 0, lastPx = 0, lastPy = 0, lastPt = 0, lastS = 0, anyActive = false;
+  function stepTrail(sNow) {
+    let act = false;
+    for (let i = 0; i < TR; i++) {
+      const sl = slots[i], u = uTrail[i].value;
+      if (sl.a0 <= 0) { if (u.z !== 0) { u.set(9, 9, 0); } continue; }
+      const age = Math.max(0, sNow - sl.t), a = sl.a0 * Math.exp(-age * 1.9) * (1 + 0.12 * Math.sin(age * 5.5));
+      if (a < 0.01) { sl.a0 = 0; u.set(9, 9, 0); continue; }
+      u.set(sl.x, sl.y, a); act = true;
+    }
+    anyActive = act;
+  }
+  function pointer(nx, ny) {
+    const t = now(), dt = Math.max(8, t - lastPt);
+    const sp = Math.hypot((nx - lastPx) * uAsp.value, ny - lastPy) / dt * 1000;   // NDC heights per second
+    lastPx = nx; lastPy = ny; lastPt = t;
+    if (sp < 0.25 || t - lastS < 55 || !visible || t0 === null) return;
+    lastS = t;
+    const sl = slots[slotI = (slotI + 1) % TR];
+    sl.x = nx; sl.y = ny; sl.t = (t - t0) / 1000; sl.a0 = Math.min(1, 0.35 + sp * 0.35);
+    dirty = true;
+  }
   let lastKey = NaN;
   function frame() {
     const key = p * 1e7 + now();   // same progress and same clock: nothing to draw (idle pages and frame-stepped recording)
@@ -113,6 +155,7 @@ export async function mount(canvas, opts) {
       // opening: the line is already on the massif at frame 0 and races across it in 1.6 s
       const ks = easeOut(Math.min(1, s / 1.6));
       uScan.value = rest + (-b[4] + span * 0.36 - rest) * (1 - ks);
+      stepTrail(s);
       renderer.render(scene, camera);
       if (opts.onReadout) {
         tmp.set(camera.position.x * 0.4, 0, uScan.value); tmp.y = groundAt(tmp.x, tmp.z);
@@ -126,6 +169,7 @@ export async function mount(canvas, opts) {
     backend: renderer.backend && renderer.backend.isWebGPUBackend ? 'webgpu' : 'webgl2',
     points: data.n,
     setProgress(v) { if (v !== p) { p = v; dirty = true; } },
+    pointer,
     dispose() { cancelAnimationFrame(raf); removeEventListener('resize', size); renderer.dispose(); geo.dispose(); }
   };
 }
