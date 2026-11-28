@@ -15,7 +15,7 @@ export async function mount(canvas, opts) {
   const b = data.bounds, H = b[5] - b[2];
 
   const renderer = new THREE.WebGPURenderer({ canvas, antialias: false, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, opts.maxDpr || 1.5));
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, opts.maxDpr || (opts.tour ? 0.8 : 1.5)));   // page backdrop: softer, cheaper
   await renderer.init();
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(opts.fog || 0x0b1424, 700, 2900);   // hides the square edge of the tile
@@ -37,10 +37,10 @@ export async function mount(canvas, opts) {
   const band = smoothstep(uBand, 0.0, abs(positionLocal.z.sub(uScan)));   // laser line
   const red = vec3(1.0, 0.27, 0.2);
   const depth = smoothstep(float(3200), float(900), positionView.z.negate());
-  const glow = smoothstep(uBand.mul(10.0), 0.0, abs(positionLocal.z.sub(uScan)));   // soft halo around the laser line
+  const glow = smoothstep(uBand.mul(18.0), 0.0, abs(positionLocal.z.sub(uScan)));   // soft halo around the laser line
   const lit = base.mul(2.05).add(vec3(0.05, 0.07, 0.11).mul(h));
   // the laser line replaces the terrain colour (a crisp red stroke, not a white-out), with a soft red halo around it
-  const col = mix(mix(base.mul(0.95), lit.mul(1.12), measured).mul(float(0.62).add(depth.mul(0.85))).add(red.mul(glow.mul(0.32))), vec3(1.0, 0.16, 0.1).mul(1.9), band);
+  const col = mix(mix(base.mul(0.95), lit.mul(1.12), measured).mul(float(0.62).add(depth.mul(0.85))).add(vec3(1.0, 0.42, 0.2).mul(glow.mul(0.5))), vec3(1.0, 0.16, 0.1).mul(1.9), band);
   const mat = new THREE.PointsNodeMaterial({ transparent: false, depthWrite: true });
   // round footprint: points fade out towards the tile edge, so the square cut never shows
   const rad = positionLocal.xz.length();
@@ -58,8 +58,8 @@ export async function mount(canvas, opts) {
     outLook.set(40 * e, 470 - 140 * e, 120 * e);
   }
   // after the hero: keyframed tour (skim low over the ridge, swing round, top-down map view, pull back wide)
-  const K = [[0, -44, 1570, 1060, 40, 330, 120], [0.28, 25, 980, 600, 0, 400, 0], [0.52, 100, 1300, 860, -80, 430, -60],
-             [0.78, 178, 520, 2250, 0, 320, 0], [1, 252, 2150, 1300, 0, 380, 0]];
+  const K = [[0, -44, 1570, 1060, 40, 330, 120], [0.3, -5, 1100, 700, 0, 400, 0], [0.55, 40, 1300, 900, -60, 420, -40],
+             [0.8, 90, 800, 1700, 0, 330, 0], [1, 130, 1900, 1250, 0, 380, 0]];   // ~175 degrees over the page: smooth, no jumps
   function tourPose(u, outPos, outLook) {
     let i = 0; while (i < K.length - 2 && u > K[i + 1][0]) i++;
     const A = K[i], B = K[i + 1], f = ease(Math.min(1, Math.max(0, (u - A[0]) / (B[0] - A[0]))));
@@ -99,7 +99,7 @@ export async function mount(canvas, opts) {
       // and swings round to the hero framing (a reveal, never a slow fade-in from the dark)
       const k = easeOut(Math.min(1, s / 3.2));
       camera.position.multiplyScalar(1 - 0.42 * (1 - k));
-      camera.position.applyAxisAngle(UP, THREE.MathUtils.degToRad(-14 * (1 - k) + 6 * Math.sin(s * 0.22)));
+      camera.position.applyAxisAngle(UP, THREE.MathUtils.degToRad(-38 * (1 - k) + 6 * Math.sin(s * 0.22)));
       camera.position.y += 18 * Math.sin(s * 0.5);
       camera.position.y = Math.max(camera.position.y, groundAt(camera.position.x, camera.position.z) + 320);   // never inside the slope
       camera.lookAt(target);
@@ -108,7 +108,7 @@ export async function mount(canvas, opts) {
       // in the first 3.2 s after the cloud appears it sweeps in from the north edge, lighting the massif as it passes
       // tour: the line keeps sweeping back and forth across the tile as the page scrolls
       const span = b[4] - b[1];
-      const rest = tu > 0 ? -b[4] + span * (0.5 - 0.42 * Math.cos(Math.PI * (1 + tu * 6))) + 50 * Math.sin(s * 1.3)
+      const rest = tu > 0 ? -b[4] + span * (0.5 - 0.42 * Math.cos(Math.PI * (1 + tu * 3))) + 50 * Math.sin(s * 1.3)
                           : -b[4] + span * (0.55 + 0.45 * Math.min(1, th / 0.85)) + 70 * Math.sin(s * 1.3);
       // opening: the line is already on the massif at frame 0 and races across it in 1.6 s
       const ks = easeOut(Math.min(1, s / 1.6));
