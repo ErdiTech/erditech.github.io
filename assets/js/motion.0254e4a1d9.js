@@ -298,10 +298,8 @@
     })();
   }
   var scrambleEls = [].slice.call(document.querySelectorAll('.kick, .film .caps, .badge, .phero .crumbs span:last-child')).filter(function (el) { return el.children.length === 0; });
-  if ('IntersectionObserver' in window) {
-    var sio = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { scramble(en.target); sio.unobserve(en.target); } }); }, { threshold: 1 });
-    scrambleEls.forEach(function (el) { sio.observe(el); });
-  }
+  /* round 5: labels are never scrambled on scroll (a stopped page must always read cleanly); nav hover only */
+  void scrambleEls;
   document.querySelectorAll('.nav-links a').forEach(function (a) { a.addEventListener('pointerenter', function () { if (!a.children.length) scramble(a); }); });
 
   /* ---------- typewriter with a keyboard that presses along ---------- */
@@ -505,12 +503,30 @@
          parsing runs in a worker; phones and Save-Data keep the rendered poster with a light parallax */
       var netInfo = navigator.connection, lowData = !!(netInfo && netInfo.saveData);
       if (pcUrl && !small && !lowData && window.Worker) {
-        var pcCanvas = sec.querySelector('.pc-canvas'), rd = sec.querySelector('.pc-readout b');
+        /* the cloud lives on one fixed canvas behind the whole page: the hero orbit runs while the hero is pinned,
+           then the camera keeps touring the massif under every later section (sections are veiled, beats are open) */
+        var rd = sec.querySelector('.pc-readout b'), old = sec.querySelector('.pc-canvas');
+        if (old) old.remove();
+        var pcCanvas = document.createElement('canvas');
+        pcCanvas.className = 'pc-bg'; pcCanvas.setAttribute('aria-hidden', 'true');
+        document.body.insertBefore(pcCanvas, document.body.firstChild);
+        doc.classList.add('cine');
+        var pageP = function () {
+          var max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+          return Math.min(1, Math.max(0, scrollY / max));
+        };
+        var heroEnd = function () {
+          var max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+          return Math.min(0.6, Math.max(0.05, (sec.offsetTop + sec.offsetHeight - innerHeight) / max));
+        };
         var go = function () {
           import('/assets/js/pc/pc.js').then(function (mod) {
-            return mod.mount(pcCanvas, { url: pcUrl, onReadout: function (d) { if (rd) rd.textContent = d.toFixed(1); } });
-          }).then(function (v) { pcView = v; v.setProgress(lastP); sec.classList.add('pc-live'); doc.dataset.pc = v.backend; })
-            .catch(function () { sec.classList.add('pc-fail'); });
+            return mod.mount(pcCanvas, { url: pcUrl, tour: true, heroEnd: heroEnd(), onReadout: function (d) { if (rd) rd.textContent = d.toFixed(1); } });
+          }).then(function (v) {
+            pcView = v; v.setProgress(pageP()); sec.classList.add('pc-live'); doc.classList.add('cine-live'); doc.dataset.pc = v.backend;
+            var tick = false;
+            addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(function () { tick = false; v.setProgress(pageP()); }); } }, { passive: true });
+          }).catch(function () { sec.classList.add('pc-fail'); doc.classList.remove('cine'); pcCanvas.remove(); });
         };
         new IntersectionObserver(function (es, io) {
           if (!es[0].isIntersecting) return; io.disconnect();
@@ -537,7 +553,7 @@
         trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true,
         onUpdate: function (st) {
           var p = st.progress; lastP = p;
-          if (pcView) pcView.setProgress(p); else if (count) draw(Math.min(count - 1, Math.round(p * (count - 1))));
+          if (pcView) { /* page-level progress, see above */ } else if (count) draw(Math.min(count - 1, Math.round(p * (count - 1))));
           setLayers(p);
           if (bar) bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
           if (zoom) {
